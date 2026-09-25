@@ -53,6 +53,13 @@ export function ContactForm() {
     setErrors((e) => ({ ...e, [name]: issue?.message }));
   };
 
+  // Re-validate while typing once a field has an error, so messages clear
+  // before the user reaches the submit button (no layout shift on click).
+  const revalidate = (e: FormEvent<HTMLFormElement>) => {
+    const name = (e.target as HTMLInputElement).name;
+    if (name && errors[name] !== undefined) validateField(name);
+  };
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const result = contactSchema.safeParse(collect());
@@ -97,15 +104,11 @@ export function ContactForm() {
   const err = (name: string) => ({
     "aria-invalid": errors[name] ? true : undefined,
     "aria-describedby": errors[name] ? `${name}-error` : undefined,
-    // Re-validate while typing once a field has an error, so messages clear
-    // before the user reaches the submit button (no layout shift on click).
-    onInput: () => errors[name] !== undefined && validateField(name),
-    onChange: () => errors[name] !== undefined && validateField(name),
   });
   const border = (name: string) => (errors[name] ? "border-cyan" : "border-line");
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} noValidate className="grid gap-6 md:grid-cols-2" aria-describedby="form-status">
+    <form ref={formRef} onSubmit={onSubmit} onInput={revalidate} onChange={revalidate} noValidate className="grid gap-6 md:grid-cols-2" aria-describedby="form-status">
       <Field id="name" label="Name" error={errors.name}>
         <input id="name" name="name" autoComplete="name" required className={cn(field, border("name"))} {...err("name")} />
       </Field>

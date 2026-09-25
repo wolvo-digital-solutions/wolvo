@@ -38,7 +38,7 @@ export function Technology() {
           const o = orbits[Number(chip.dataset.orbit)];
           const a = Number(chip.dataset.angle) + time * o.speed * Math.PI * 2;
           const depth = Math.sin(a); // -1 back … 1 front
-          chip.style.transform = `translate(-50%, -50%) translate(${Math.cos(a) * o.rx * w}px, ${depth * o.ry * 1.333 * h}px) scale(${0.82 + (depth + 1) * 0.11})`;
+          chip.style.transform = `translate(-50%, -50%) translate(${Math.cos(a) * o.rx * w}px, ${depth * o.ry * w}px) scale(${0.82 + (depth + 1) * 0.11})`;
           chip.style.opacity = String(0.45 + (depth + 1) * 0.275);
           chip.style.zIndex = String(Math.round((depth + 1) * 10));
         });
@@ -100,7 +100,7 @@ export function Technology() {
         </div>
 
         {/* Orbital visual — decorative; the list above carries the information. */}
-        <div ref={stage} aria-hidden className="relative mx-auto aspect-square w-full max-w-[640px] sm:aspect-[4/3]">
+        <div ref={stage} aria-hidden className="relative mx-auto hidden aspect-[4/3] w-full max-w-[640px] sm:block">
           <svg viewBox="-50 -50 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full">
             {orbits.map((o, i) => (
               <ellipse key={i} cx="0" cy="0" rx={o.rx * 100} ry={o.ry * 100 * 1.33} fill="none" stroke="#16345e" strokeWidth="0.25" vectorEffect="non-scaling-stroke" />

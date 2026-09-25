@@ -166,7 +166,7 @@ export function Hero() {
         <div
           data-hero-scrim
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/10 to-transparent md:bg-gradient-to-r md:from-navy-950/90 md:via-navy-950/30 md:to-transparent"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950 from-5% via-navy-950/75 via-45% to-transparent to-75% md:bg-gradient-to-r md:from-navy-950/90 md:via-navy-950/30 md:to-transparent"
         />
         <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy-950 to-transparent" />
 
@@ -174,7 +174,7 @@ export function Hero() {
         <div className="container-x relative flex h-full items-end pb-24 md:items-center md:pb-0">
           <div data-hero-intro className="max-w-[36rem] md:pt-16">
             <p className="eyebrow">Digital technology &amp; creative studio</p>
-            <h1 id="hero-title" className="mt-5 text-[clamp(2.75rem,5.6vw,6.25rem)] leading-[0.95] uppercase">
+            <h1 id="hero-title" className="mt-5 text-[clamp(2.6rem,5vw,5.75rem)] leading-[0.95] uppercase">
               Turning ideas into <span className="text-brand">digital impact.</span>
             </h1>
             <p className="mt-6 max-w-lg text-base text-ink/80 md:text-lg">

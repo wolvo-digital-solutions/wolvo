@@ -31,7 +31,19 @@ export function PageMotion() {
         once: true,
         onEnter: (batch) => {
           batch.forEach((el) => el.setAttribute("data-revealed", ""));
-          gsap.to(batch, { opacity: 1, y: 0, duration: 1.1, ease: "expo.out", stagger: 0.08, overwrite: true });
+          // After a jump (anchor link / refresh mid-page) everything skipped over
+          // fires at once: show off-screen items instantly, animate only visible ones.
+          const visible = batch.filter((el) => el.getBoundingClientRect().bottom > 0);
+          const skipped = batch.filter((el) => !visible.includes(el));
+          gsap.set(skipped, { opacity: 1, y: 0 });
+          gsap.to(visible, {
+            opacity: 1,
+            y: 0,
+            duration: 1.1,
+            ease: "expo.out",
+            stagger: { amount: Math.min(0.45, visible.length * 0.08) },
+            overwrite: true,
+          });
         },
       });
       ScrollTrigger.refresh();

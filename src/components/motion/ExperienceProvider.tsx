@@ -48,10 +48,8 @@ function detectTier(): Tier {
  * and Lenis smooth scrolling synchronised to GSAP's ticker + ScrollTrigger.
  */
 export function ExperienceProvider({ children }: { children: ReactNode }) {
-  const [ready, setReady] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [tier, setTier] = useState<Tier>("high");
-  const [webgl, setWebgl] = useState(true);
+  const [caps, setCaps] = useState({ ready: false, reducedMotion: false, tier: "high" as Tier, webgl: true });
+  const { ready, reducedMotion, tier, webgl } = caps;
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
@@ -60,17 +58,18 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
     // ?motion=full | ?motion=reduced overrides the OS setting (QA / previews).
     const override = new URLSearchParams(location.search).get("motion");
     if (override === "full") document.documentElement.classList.add("motion-full");
-    const sync = () => setReducedMotion(override === "full" ? false : override === "reduced" ? true : mq.matches);
-    sync();
-    setTier(detectTier());
-    setWebgl(detectWebGL());
-    setReady(true);
+    const prefersReduced = () => (override === "full" ? false : override === "reduced" ? true : mq.matches);
+    const sync = () => setCaps((c) => ({ ...c, reducedMotion: prefersReduced() }));
+    // Capabilities are only knowable on the client; reading them once after
+    // hydration (instead of during render) avoids SSR/client markup mismatches.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCaps({ ready: true, reducedMotion: prefersReduced(), tier: detectTier(), webgl: detectWebGL() });
     mq.addEventListener("change", sync);
 
     let raf = 0;
     const onResize = () => {
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => setTier(detectTier()));
+      raf = requestAnimationFrame(() => setCaps((c) => { const t = detectTier(); return t === c.tier ? c : { ...c, tier: t }; }));
     };
     window.addEventListener("resize", onResize);
     return () => {

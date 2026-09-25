@@ -9,11 +9,14 @@ export function Particles({ count = 220, radius = 6, size = 0.035, color = "#18a
   const ref = useRef<THREE.Points>(null);
   // Declarative geometry so R3F disposes it on unmount.
   const positions = useMemo(() => {
+    // Seeded so the field is stable between renders (and render stays pure).
+    let seed = count * 9301 + 49297;
+    const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * radius * 2;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * radius * 1.2;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * radius;
+      pos[i * 3] = (rnd() - 0.5) * radius * 2;
+      pos[i * 3 + 1] = (rnd() - 0.5) * radius * 1.2;
+      pos[i * 3 + 2] = (rnd() - 0.5) * radius;
     }
     return pos;
   }, [count, radius]);

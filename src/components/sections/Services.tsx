@@ -138,7 +138,7 @@ function PinnedServices({ webgl }: { webgl: boolean }) {
           className="pointer-events-none absolute right-[-10%] top-1/2 size-[70vw] -translate-y-1/2 rounded-full opacity-60"
           style={{ background: "radial-gradient(circle, rgb(13 121 253 / 0.18), transparent 60%)" }}
         />
-        <div className="container-x relative grid flex-1 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+        <div className="container-x relative grid flex-1 content-center items-center gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-8">
           <div className="relative z-10">
             <p className="eyebrow">
               <span className="text-muted">02</span>
@@ -148,7 +148,7 @@ function PinnedServices({ webgl }: { webgl: boolean }) {
             <h2 id="services-title" className="mt-4 max-w-md font-display text-2xl uppercase tracking-tight text-ink/70 md:text-3xl">
               Six disciplines. <span className="text-brand">One studio.</span>
             </h2>
-            <div className="relative mt-10 min-h-[25rem]">
+            <div className="relative mt-8 min-h-[21rem] lg:mt-10 lg:min-h-[25rem]">
               {services.map((s, i) => (
                 <article
                   key={s.id}
@@ -166,7 +166,7 @@ function PinnedServices({ webgl }: { webgl: boolean }) {
 
           <SceneMount
             enabled={webgl}
-            className="pointer-events-none absolute inset-y-0 right-0 w-[62%] lg:relative lg:inset-auto lg:h-[70vh] lg:w-auto"
+            className="pointer-events-none h-[34svh] w-full lg:h-[70vh]"
             fallback={
               <div className="flex h-full items-center justify-center">
                 <ServiceGlyph id={services[active].id} className="size-56" />

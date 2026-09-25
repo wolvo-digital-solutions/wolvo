@@ -14,7 +14,8 @@ export function Testimonials() {
 
   useGSAP(
     () => {
-      if (!ready || reducedMotion || tier === "low") return;
+      // Drift only where the row is laid out (not a horizontal scroller).
+      if (!ready || reducedMotion || tier === "low" || window.innerWidth < 1280) return;
       // Subtle horizontal drift while the section passes.
       gsap.fromTo(
         "[data-drift]",
@@ -38,16 +39,13 @@ export function Testimonials() {
       <div className="relative mt-16">
         <ul
           data-drift
-          className="flex snap-x snap-mandatory gap-6 overflow-x-auto px-[var(--gutter)] pb-4 [scrollbar-width:none] md:justify-center md:overflow-visible"
+          className="flex snap-x snap-mandatory gap-6 overflow-x-auto px-[var(--gutter)] pb-4 [scrollbar-width:none] xl:justify-center xl:overflow-visible"
           aria-label="Client testimonials"
         >
           {testimonials.map((t, i) => (
-            <li
-              key={i}
-              className="group panel w-[85vw] shrink-0 snap-center rounded-[8px] p-8 backdrop-blur-sm transition-[transform,border-color,opacity] duration-500 hover:-translate-y-1 hover:border-sky/50 sm:w-[420px] md:opacity-80 md:hover:opacity-100"
-              data-reveal
-            >
-              <figure className="flex h-full flex-col">
+            // data-reveal (GSAP) and hover transitions live on separate elements so they never fight.
+            <li key={i} className="w-[85vw] shrink-0 snap-center sm:w-[420px]" data-reveal>
+              <figure className="panel flex h-full flex-col rounded-[8px] p-8 transition-[transform,border-color,opacity] duration-500 hover:-translate-y-1 hover:border-sky/50 md:opacity-80 md:hover:opacity-100">
                 <Quote aria-hidden className="size-7 text-sky" strokeWidth={1.2} />
                 <blockquote className="mt-6 flex-1 font-display text-xl leading-snug">
                   <Content value={t.quote} />

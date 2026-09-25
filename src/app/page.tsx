@@ -3,10 +3,10 @@ import { PageMotion } from "@/components/motion/PageMotion";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Preloader } from "@/components/layout/Preloader";
+import { Hero } from "@/components/sections/Hero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const stubs = [
-  ["top", "Hero"],
   ["intro", "Trust"],
   ["services", "Services"],
   ["capabilities", "Capabilities"],
@@ -33,9 +33,10 @@ export default function Home() {
       <PageMotion />
       <Navbar />
       <main id="main">
+        <Hero />
         {stubs.map(([id, name], i) => (
           <section key={id} id={id} className="container-x flex min-h-screen items-center border-b border-line/40">
-            <SectionHeading index={String(i + 1).padStart(2, "0")} eyebrow={name} title={name} />
+            <SectionHeading index={String(i + 2).padStart(2, "0")} eyebrow={name} title={name} />
           </section>
         ))}
       </main>

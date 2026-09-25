@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   WOLVO design tokens
+   Reference values from docs/DESIGN_SYSTEM.md — the supplied logo
+   remains the authority on brand colour.
+------------------------------------------------------------------- */
+@theme {
+  --color-navy-950: #030b1e;
+  --color-navy-900: #06132d;
+  --color-navy-800: #0a1c3f;
+  --color-line: #16345e;
+  --color-royal: #0935ca;
+  --color-electric: #0d79fd;
+  --color-sky: #18acfd;
+  --color-cyan: #1fcbfd;
+  --color-ink: #f7faff;
+  --color-muted: #9aa8bd;
+  --color-faint: #5f6f88;
+
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --text-h1: clamp(2.75rem, 7.2vw, 7.5rem);
+  --text-h1--line-height: 0.95;
+  --text-h2: clamp(2rem, 4.8vw, 4.75rem);
+  --text-h2--line-height: 1;
+  --text-h3: clamp(1.5rem, 2.6vw, 2.5rem);
+  --text-h3--line-height: 1.1;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-cinematic: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --nav-h: 76px;
+    --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  }
+
+  html {
+    background: var(--color-navy-950);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    scroll-padding-top: var(--nav-h);
+  }
+
+  body {
+    background: var(--color-navy-950);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  p { text-wrap: pretty; }
+
+  ::selection {
+    background: var(--color-electric);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-cyan);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* Lenis (smooth scroll) required rules */
+html.lenis, html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Small uppercase label used above headings */
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-sky);
+  }
+
+  /* Brand gradient text — taken from the logo's royal → cyan range */
+  .text-brand {
+    background: linear-gradient(100deg, var(--color-royal) 0%, var(--color-electric) 35%, var(--color-sky) 70%, var(--color-cyan) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Hairline surface for panels */
+  .panel {
+    background: linear-gradient(180deg, rgb(10 28 63 / 0.55), rgb(6 19 45 / 0.35));
+    border: 1px solid rgb(22 52 94 / 0.8);
+  }
+
+  /* Visible, deliberate content placeholder — never shipped as real copy */
+  .placeholder {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8em;
+    letter-spacing: 0.02em;
+    color: var(--color-cyan);
+    background: rgb(31 203 253 / 0.07);
+    border: 1px dashed rgb(31 203 253 / 0.45);
+    padding: 0.1em 0.45em;
+    border-radius: 3px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+}
+
+/* Pre-JS reveal state. JS adds .js to <html>; without it everything is visible. */
+.js [data-reveal] { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.motion-full) *, html:not(.motion-full) *::before, html:not(.motion-full) *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js [data-reveal] { opacity: 1; }
+}
+
+/* Preloader auto-dismisses even if JS never runs */
+@keyframes preloader-failsafe { to { opacity: 0; visibility: hidden; } }
+@keyframes preloader-line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes scroll-cue { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }

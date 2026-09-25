@@ -7,10 +7,10 @@ import { Hero } from "@/components/sections/Hero";
 import { Trust } from "@/components/sections/Trust";
 import { Services } from "@/components/sections/Services";
 import { Capabilities } from "@/components/sections/Capabilities";
+import { Work } from "@/components/sections/Work";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const stubs = [
-  ["work", "Selected work"],
   ["process", "Process"],
   ["about", "About WOLVO"],
   ["founders", "Founders"],
@@ -37,9 +37,10 @@ export default function Home() {
         <Trust />
         <Services />
         <Capabilities />
+        <Work />
         {stubs.map(([id, name], i) => (
           <section key={id} id={id} className="container-x flex min-h-screen items-center border-b border-line/40">
-            <SectionHeading index={String(i + 5).padStart(2, "0")} eyebrow={name} title={name} />
+            <SectionHeading index={String(i + 6).padStart(2, "0")} eyebrow={name} title={name} />
           </section>
         ))}
       </main>

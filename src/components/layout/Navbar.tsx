@@ -77,9 +77,11 @@ export function Navbar() {
         </ul>
 
         <div className="flex items-center gap-3">
-          <ButtonLink href="#contact" className="hidden min-h-10 px-5 text-[0.72rem] sm:inline-flex">
-            Start a project
-          </ButtonLink>
+          <div className="hidden sm:block">
+            <ButtonLink href="#contact" className="min-h-10 px-5 text-[0.72rem]">
+              Start a project
+            </ButtonLink>
+          </div>
           <button
             ref={toggleRef}
             type="button"

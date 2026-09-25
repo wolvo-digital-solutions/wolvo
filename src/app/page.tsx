@@ -14,15 +14,26 @@ import { Founders } from "@/components/sections/Founders";
 import { Technology } from "@/components/sections/Technology";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { GlobalVision } from "@/components/sections/GlobalVision";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { FinalCta } from "@/components/sections/FinalCta";
+import { siteMeta, siteUrl } from "@/lib/site";
+import { services } from "@/data/services";
 
-const stubs = [
-  ["contact", "Final CTA"],
-] as const;
+// Structured data: only verified facts (name, description, services offered).
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "WOLVO",
+  url: siteUrl,
+  logo: `${siteUrl}/icon.png`,
+  description: siteMeta.description,
+  slogan: "Ideas → Digital → Impact",
+  makesOffer: services.map((s) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: s.title, description: s.summary } })),
+};
 
 export default function Home() {
   return (
     <ExperienceProvider>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded focus:bg-ink focus:px-4 focus:py-2 focus:text-navy-950"
@@ -44,11 +55,7 @@ export default function Home() {
         <Technology />
         <Testimonials />
         <GlobalVision />
-        {stubs.map(([id, name], i) => (
-          <section key={id} id={id} className="container-x flex min-h-screen items-center border-b border-line/40">
-            <SectionHeading index={String(i + 9).padStart(2, "0")} eyebrow={name} title={name} />
-          </section>
-        ))}
+        <FinalCta />
       </main>
       <Footer />
     </ExperienceProvider>

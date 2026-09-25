@@ -5,7 +5,10 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import { company } from "@/data/company";
 import { useExperience } from "@/components/motion/ExperienceProvider";
 import { ButtonLink } from "@/components/ui/Button";
-import { ContactForm } from "@/components/ui/ContactForm";
+import dynamic from "next/dynamic";
+
+// Split the form (and its validation library) out of the initial bundle; still server-rendered.
+const ContactForm = dynamic(() => import("@/components/ui/ContactForm").then((m) => m.ContactForm));
 
 /**
  * The journey closes where it began: the supplied wolf frame returns, lit by

@@ -29,7 +29,7 @@ const d = nodes.map((n, i) => `${i ? "L" : "M"}${n.x} ${n.y}`).join(" ");
 export function Capabilities() {
   const { ready, reducedMotion, tier } = useExperience();
   const root = useRef<HTMLElement>(null);
-  const pinned = ready && !reducedMotion && tier !== "low";
+  const pinned = ready && !reducedMotion && tier === "high";
 
   useGSAP(
     () => {

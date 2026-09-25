@@ -13,7 +13,7 @@ const variants: Record<Variant, string> = {
   primary:
     "bg-electric text-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.18)] hover:bg-sky hover:shadow-[0_10px_40px_-12px_rgb(13_121_253/0.8)]",
   secondary: "border border-line bg-navy-950/30 text-ink hover:border-sky/70 hover:bg-navy-800/60",
-  ghost: "px-0 text-ink hover:text-cyan",
+  ghost: "px-0! text-ink hover:text-cyan",
 };
 
 type Props = ComponentPropsWithoutRef<"a"> & { variant?: Variant; icon?: boolean; magnetic?: boolean };

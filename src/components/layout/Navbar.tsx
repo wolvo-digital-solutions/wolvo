@@ -34,7 +34,8 @@ export function Navbar() {
       }
       // Keep focus inside the open menu.
       if (e.key === "Tab" && menuRef.current) {
-        const f = Array.from(menuRef.current.querySelectorAll<HTMLElement>("a, button")).concat(toggleRef.current!);
+        // DOM order: the toggle sits before the menu panel.
+        const f = [toggleRef.current!, ...Array.from(menuRef.current.querySelectorAll<HTMLElement>("a, button"))];
         const i = f.indexOf(document.activeElement as HTMLElement);
         if (e.shiftKey && i <= 0) {
           e.preventDefault();

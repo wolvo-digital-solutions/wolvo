@@ -21,10 +21,11 @@ export function PageMotion() {
     const raf = requestAnimationFrame(() => {
       const items = gsap.utils.toArray<HTMLElement>("[data-reveal]:not([data-revealed])");
       if (reducedMotion) {
-        gsap.set(items, { opacity: 1, clearProps: "transform" });
+        if (items.length) gsap.set(items, { opacity: 1, clearProps: "transform" });
         items.forEach((el) => el.setAttribute("data-revealed", ""));
         return;
       }
+      if (!items.length) return;
       gsap.set(items, { opacity: 0, y: 28 });
       triggers = ScrollTrigger.batch(items, {
         start: "top 88%",
@@ -35,7 +36,8 @@ export function PageMotion() {
           // fires at once: show off-screen items instantly, animate only visible ones.
           const visible = batch.filter((el) => el.getBoundingClientRect().bottom > 0);
           const skipped = batch.filter((el) => !visible.includes(el));
-          gsap.set(skipped, { opacity: 1, y: 0 });
+          if (skipped.length) gsap.set(skipped, { opacity: 1, y: 0 });
+          if (!visible.length) return;
           gsap.to(visible, {
             opacity: 1,
             y: 0,

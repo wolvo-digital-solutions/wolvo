@@ -11,24 +11,36 @@ import { useExperience } from "./ExperienceProvider";
  *  - same-page anchor links route through Lenis
  */
 export function PageMotion() {
-  const { ready, reducedMotion, scrollTo } = useExperience();
+  const { ready, reducedMotion, tier, scrollTo } = useExperience();
 
   useEffect(() => {
     if (!ready) return;
-    const items = gsap.utils.toArray<HTMLElement>("[data-reveal]");
-    if (reducedMotion) {
-      gsap.set(items, { opacity: 1, clearProps: "transform" });
-      return;
-    }
-    gsap.set(items, { opacity: 0, y: 28 });
-    const triggers = ScrollTrigger.batch(items, {
-      start: "top 88%",
-      once: true,
-      onEnter: (batch) =>
-        gsap.to(batch, { opacity: 1, y: 0, duration: 1.1, ease: "expo.out", stagger: 0.08, overwrite: true }),
+    // Sections swap layouts (pinned ⇄ stacked) when capabilities change, so
+    // re-scan for elements that haven't been revealed yet on every mode change.
+    let triggers: ScrollTrigger[] = [];
+    const raf = requestAnimationFrame(() => {
+      const items = gsap.utils.toArray<HTMLElement>("[data-reveal]:not([data-revealed])");
+      if (reducedMotion) {
+        gsap.set(items, { opacity: 1, clearProps: "transform" });
+        items.forEach((el) => el.setAttribute("data-revealed", ""));
+        return;
+      }
+      gsap.set(items, { opacity: 0, y: 28 });
+      triggers = ScrollTrigger.batch(items, {
+        start: "top 88%",
+        once: true,
+        onEnter: (batch) => {
+          batch.forEach((el) => el.setAttribute("data-revealed", ""));
+          gsap.to(batch, { opacity: 1, y: 0, duration: 1.1, ease: "expo.out", stagger: 0.08, overwrite: true });
+        },
+      });
+      ScrollTrigger.refresh();
     });
-    return () => triggers.forEach((t) => t.kill());
-  }, [ready, reducedMotion]);
+    return () => {
+      cancelAnimationFrame(raf);
+      triggers.forEach((t) => t.kill());
+    };
+  }, [ready, reducedMotion, tier]);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {

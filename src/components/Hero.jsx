@@ -18,6 +18,7 @@ export default function Hero() {
       .from('.hero-actions > *', { y: 20, opacity: 0, duration: 0.7, stagger: 0.1 }, 1)
       .from('.hero-features li', { y: 16, opacity: 0, duration: 0.6, stagger: 0.1 }, 1.15)
       .from('.hero-tagline', { x: 24, opacity: 0, duration: 0.9 }, 1.1)
+      .from('.hero-tagline > span', { y: 14, opacity: 0, duration: 0.6, stagger: 0.08 }, 1.25)
     gsap.to('.hero-media img', {
       yPercent: 4, ease: 'none',
       scrollTrigger: { trigger: ref.current, start: 'top top', end: 'bottom top', scrub: true },
@@ -37,7 +38,7 @@ export default function Hero() {
             <span className="line"><span>Impactful <em>Solutions</em></span></span>
           </h1>
           <p className="hero-desc">
-            WOLVO is a modern IT solutions company, building scalable software, mobile apps and digital products
+            WOLVO is a modern IT &amp; digital solutions company, building scalable software, mobile apps, brands and digital products
             that help businesses grow, adapt and lead in a rapidly changing world.
           </p>
           <div className="hero-actions">
@@ -50,7 +51,12 @@ export default function Hero() {
             <li><span className="fi"><TrendingUp size={15} /></span>Scalable Growth</li>
           </ul>
         </div>
-        <p className="hero-tagline">Smart<br />Technology<br />for a Stronger<br />Tomorrow<span /></p>
+        <p className="hero-tagline">
+          <span className="tg-sm">Smart</span>
+          <span className="tg-lg">Technology</span>
+          <span className="tg-sm">for a Stronger</span>
+          <span className="tg-lg tg-accent">Tomorrow</span>
+        </p>
       </div>
     </section>
   )

@@ -11,7 +11,7 @@ export default function Services() {
         <div className="section-head">
           <div>
             <p className="kicker" data-reveal>Our Services</p>
-            <h2 data-reveal>End-to-End IT Solutions<br />for Your Business</h2>
+            <h2 data-reveal>End-to-End IT &amp; Digital Solutions<br />for Your Business</h2>
           </div>
           <a href="#services" className="link" data-reveal>View All Services <ArrowRight size={13} /></a>
         </div>

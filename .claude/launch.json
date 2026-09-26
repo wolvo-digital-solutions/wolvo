@@ -1,1 +1,10 @@
+<<<<<<< HEAD
 {"version":"0.0.1","configurations":[{"name":"wolvo","runtimeExecutable":"npm","runtimeArgs":["run","dev","--","--port","5173"],"port":5173}]}
+=======
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "wolvo-dev", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3000 }
+  ]
+}
+>>>>>>> 8919ebd58bbbb7599e6902b6a9ee35cedc0e995a

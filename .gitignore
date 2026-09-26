@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -22,3 +23,17 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+=======
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+.env
+.env*.local
+.DS_Store
+# Source archives are large; keep them out of git. Derived WebP frames in public/ are committed.
+source-assets/*.zip
+source-assets/.frames/
+.claude/settings.local.json
+>>>>>>> 8919ebd58bbbb7599e6902b6a9ee35cedc0e995a

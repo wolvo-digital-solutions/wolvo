@@ -1,4 +1,4 @@
-import { Code, Smartphone, Component, Cloud, BrainCircuit, Users } from 'lucide-react'
+import { Code, Smartphone, Component, Cloud, BrainCircuit, Users, Share2, Megaphone, PenTool, Camera, Clapperboard } from 'lucide-react'
 import p1 from '../assets/img/p1.jpg'
 import p2 from '../assets/img/p2.jpg'
 import p3 from '../assets/img/p3.jpg'
@@ -28,6 +28,11 @@ export const services = [
   { icon: Cloud, title: 'Cloud Solutions', text: 'Secure and scalable cloud infrastructure and deployment.' },
   { icon: BrainCircuit, title: 'AI & Automation', text: 'Smart solutions using AI and automation to increase efficiency.' },
   { icon: Users, title: 'IT Consulting', text: 'Strategic guidance for digital transformation and growth.' },
+  { icon: Share2, title: 'Social Media Management', text: 'End-to-end handling of your social channels to grow reach and engagement.' },
+  { icon: Megaphone, title: 'Meta Ads & Digital Advertising', text: 'Targeted Facebook & Instagram campaigns that drive leads and sales.' },
+  { icon: PenTool, title: 'Logo & Brand Identity', text: 'Memorable logos and cohesive brand identities that stand out.' },
+  { icon: Camera, title: 'Content Creation', text: 'Engaging posts, graphics and copy crafted for your audience.' },
+  { icon: Clapperboard, title: 'Video Editing', text: 'Professional reels, ads and brand videos that tell your story.' },
 ]
 
 export const products = [
@@ -67,6 +72,18 @@ export const technologies = [
   { name: 'Git', logo: logo('git') },
   { name: 'Kubernetes', logo: logo('kubernetes') },
   { name: 'Redis', logo: logo('redis') },
+  { name: 'ChatGPT', logo: logo('chatgpt') },
+  { name: 'Claude', logo: logo('claude') },
+  { name: 'Gemini', logo: logo('gemini') },
+  { name: 'Google Flow', logo: logo('googleflow') },
+  { name: 'Photoshop', logo: logo('photoshop') },
+  { name: 'Illustrator', logo: logo('illustrator') },
+  { name: 'Premiere Pro', logo: logo('premierepro') },
+  { name: 'After Effects', logo: logo('aftereffects') },
+  { name: 'DaVinci Resolve', logo: logo('davinciresolve') },
+  { name: 'CapCut', logo: logo('capcut') },
+  { name: 'Canva', logo: logo('canva') },
+  { name: 'Blender', logo: logo('blender') },
 ]
 
 export const testimonials = [

@@ -19,8 +19,8 @@ export default function About() {
           <p className="kicker" data-reveal>About WOLVO</p>
           <h2 data-reveal>We Build Digital<br />Solutions for a<br />Smarter Tomorrow</h2>
           <p className="muted" data-reveal>
-            WOLVO is a team of passionate developers, designers and problem-solvers. We create technology that
-            simplifies complex challenges and drives real business value. With a focus on innovation, quality and
+            WOLVO is a team of passionate developers, designers, marketers and problem-solvers. We create technology
+            and creative digital experiences that simplify complex challenges and drive real business value. With a focus on innovation, quality and
             long-term partnerships, we help businesses turn ideas into products that make an impact.
           </p>
           <div data-reveal><Button variant="outline" href="#services">Learn More</Button></div>

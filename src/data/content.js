@@ -16,7 +16,7 @@ export const navLinks = [
   { label: 'About', id: 'about' },
   { label: 'Services', id: 'services' },
   { label: 'Products', id: 'products' },
-  { label: 'Portfolio', id: 'portfolio' },
+
   { label: 'Technology', id: 'technology' },
   { label: 'Contact', id: 'contact' },
 ]
@@ -25,7 +25,7 @@ export const services = [
   { icon: Code, title: 'Web Development', text: 'Modern, responsive and scalable web applications for your business.' },
   { icon: Smartphone, title: 'Mobile App Development', text: 'High-performance mobile apps for Android & iOS (React Native).' },
   { icon: Component, title: 'UI/UX Design', text: 'Beautiful and intuitive interfaces that users love.' },
-  { icon: Cloud, title: 'Cloud Solutions', text: 'Secure and scalable cloud infrastructure and deployment.' },
+
   { icon: BrainCircuit, title: 'AI & Automation', text: 'Smart solutions using AI and automation to increase efficiency.' },
   { icon: Users, title: 'IT Consulting', text: 'Strategic guidance for digital transformation and growth.' },
   { icon: Share2, title: 'Social Media Management', text: 'End-to-end handling of your social channels to grow reach and engagement.' },

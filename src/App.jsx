@@ -8,7 +8,7 @@ import Services from './components/Services'
 import Products from './components/Products'
 import WhyWolvo from './components/WhyWolvo'
 import Technologies from './components/Technologies'
-import Portfolio from './components/Portfolio'
+import Founders from './components/Founders'
 import Testimonials from './components/Testimonials'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
@@ -37,7 +37,7 @@ export default function App() {
         <Products />
         <WhyWolvo />
         <Technologies />
-        <Portfolio />
+        <Founders />
         <Testimonials />
         <Contact />
       </main>

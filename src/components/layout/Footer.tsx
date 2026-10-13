@@ -12,7 +12,7 @@ import './Footer.css';
 
 export function Footer() {
   const ref = useRef<HTMLElement>(null);
-  const { openContact } = useUI();
+  const { openContact, openGitHubShare } = useUI();
   useSectionMotion(ref);
   const year = new Date().getFullYear();
 
@@ -59,6 +59,10 @@ export function Footer() {
             </a>
             <button type="button" className="link-arrow" onClick={() => openContact({ source: 'footer' })}>
               Start a project
+              <ArrowUpRight strokeWidth={2} aria-hidden="true" />
+            </button>
+            <button type="button" className="link-arrow" onClick={openGitHubShare}>
+              GitHub repo &amp; share
               <ArrowUpRight strokeWidth={2} aria-hidden="true" />
             </button>
             <SocialList links={socialLinks} />

@@ -1,0 +1,1 @@
+import{S as e,w as t}from"./x-3N6SixHZ.js";var n=t(e(),1);function r(e){let[t,r]=(0,n.useState)(e??null);return e!=null&&e!==t&&r(e),e??t}export{r as t};

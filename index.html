@@ -29,10 +29,10 @@
       })();
     </script>
 
-    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
-    <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" href="./favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="./favicon-48.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./site.webmanifest" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -63,12 +63,12 @@
       rel="preload"
       as="image"
       type="image/avif"
-      imagesrcset="/images/hero-workspace-640.avif 640w, /images/hero-workspace-960.avif 960w, /images/hero-workspace-1280.avif 1280w, /images/hero-workspace-1672.avif 1672w"
+      imagesrcset="./images/hero-workspace-640.avif 640w, ./images/hero-workspace-960.avif 960w, ./images/hero-workspace-1280.avif 1280w, ./images/hero-workspace-1672.avif 1672w"
       imagesizes="(min-width: 1024px) 104vw, calc(100vw - 40px)"
       fetchpriority="high"
       media="(min-width: 768px) and ((pointer: fine) or (min-height: 501px) or (orientation: portrait))"
     />
-    <link rel="preload" as="image" type="image/webp" href="/brand/wolvo-mark.webp" />
+    <link rel="preload" as="image" type="image/webp" href="./brand/wolvo-mark.webp" />
 
     <script type="application/ld+json">
       {
@@ -82,6 +82,17 @@
         "knowsAbout": ["Web development", "App development", "Meta Ads", "Video editing", "Branding & design"]
       }
     </script>
+    <script>
+      /* Fallback for GitHub Pages root static serving: redirect to compiled docs if unbundled */
+      if (
+        window.location.hostname.endsWith('github.io') &&
+        (window.location.pathname === '/wolvo' || window.location.pathname === '/wolvo/')
+      ) {
+        fetch('./docs/index.html', { method: 'HEAD' })
+          .then(function (r) { if (r.ok) window.location.replace('./docs/'); })
+          .catch(function () {});
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
@@ -91,6 +102,6 @@
         Please enable JavaScript for the full experience.
       </div>
     </noscript>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>

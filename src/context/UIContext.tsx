@@ -15,6 +15,7 @@ export interface UIState {
   articleId: string | null;
   projectsIndex: boolean;
   articlesIndex: boolean;
+  githubShare: boolean;
 }
 
 export interface UIActions {
@@ -28,6 +29,8 @@ export interface UIActions {
   closeProjectsIndex: () => void;
   openArticlesIndex: () => void;
   closeArticlesIndex: () => void;
+  openGitHubShare: () => void;
+  closeGitHubShare: () => void;
   closeAll: () => void;
 }
 
@@ -37,6 +40,7 @@ const initialState: UIState = {
   articleId: null,
   projectsIndex: false,
   articlesIndex: false,
+  githubShare: false,
 };
 
 const StateContext = createContext<UIState>(initialState);
@@ -67,6 +71,11 @@ export function UIProvider({ children }: { children: ReactNode }) {
       closeProjectsIndex: () => setState((s) => ({ ...s, projectsIndex: false })),
       openArticlesIndex: () => setState((s) => ({ ...s, articlesIndex: true })),
       closeArticlesIndex: () => setState((s) => ({ ...s, articlesIndex: false })),
+      openGitHubShare: () => {
+        track('github_share_open', {});
+        setState((s) => ({ ...s, githubShare: true }));
+      },
+      closeGitHubShare: () => setState((s) => ({ ...s, githubShare: false })),
       closeAll: () => setState(initialState),
     }),
     [],

@@ -1,4 +1,11 @@
-type TrackEvent = 'cta_click' | 'project_open' | 'article_open' | 'contact_open' | 'contact_submit' | 'whatsapp_click';
+type TrackEvent =
+  | 'cta_click'
+  | 'project_open'
+  | 'article_open'
+  | 'contact_open'
+  | 'contact_submit'
+  | 'whatsapp_click'
+  | 'github_share_open';
 
 declare global {
   interface Window {

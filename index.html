@@ -12,7 +12,7 @@
     <meta name="color-scheme" content="dark light" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="Wolvo" />
-    <link rel="canonical" href="__SITE_URL__/" />
+    <link rel="canonical" href="https://wolvo.agency/" />
 
     <!-- Apply the saved day/night theme before first paint (no flash of the wrong theme). -->
     <script>
@@ -29,10 +29,10 @@
       })();
     </script>
 
-    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
-    <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" href="./favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="./favicon-48.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./site.webmanifest" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -42,8 +42,8 @@
       property="og:description"
       content="Websites, mobile apps, Meta Ads and video editing — designed, built and launched by one flexible freelance team."
     />
-    <meta property="og:url" content="__SITE_URL__/" />
-    <meta property="og:image" content="__SITE_URL__/og-image.jpg" />
+    <meta property="og:url" content="https://wolvo.agency/" />
+    <meta property="og:image" content="https://wolvo.agency/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Wolvo — Creative Ideas. Smart Technology. Real Results." />
@@ -56,32 +56,46 @@
       name="twitter:description"
       content="Websites, mobile apps, Meta Ads and video editing — designed, built and launched by one flexible freelance team."
     />
-    <meta name="twitter:image" content="__SITE_URL__/og-image.jpg" />
+    <meta name="twitter:image" content="https://wolvo.agency/og-image.jpg" />
 
     <!-- Critical hero image -->
     <link
       rel="preload"
       as="image"
       type="image/avif"
-      imagesrcset="/images/hero-workspace-640.avif 640w, /images/hero-workspace-960.avif 960w, /images/hero-workspace-1280.avif 1280w, /images/hero-workspace-1672.avif 1672w"
+      imagesrcset="./images/hero-workspace-640.avif 640w, ./images/hero-workspace-960.avif 960w, ./images/hero-workspace-1280.avif 1280w, ./images/hero-workspace-1672.avif 1672w"
       imagesizes="(min-width: 1024px) 104vw, calc(100vw - 40px)"
       fetchpriority="high"
       media="(min-width: 768px) and ((pointer: fine) or (min-height: 501px) or (orientation: portrait))"
     />
-    <link rel="preload" as="image" type="image/webp" href="/brand/wolvo-mark.webp" />
+    <link rel="preload" as="image" type="image/webp" href="./brand/wolvo-mark.webp" />
 
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "Wolvo",
-        "url": "__SITE_URL__/",
-        "logo": "__SITE_URL__/icon-512.png",
-        "image": "__SITE_URL__/og-image.jpg",
+        "url": "https://wolvo.agency/",
+        "logo": "https://wolvo.agency/icon-512.png",
+        "image": "https://wolvo.agency/og-image.jpg",
         "description": "Freelance digital agency providing web development, app development, Meta Ads, video editing, and branding & design.",
         "knowsAbout": ["Web development", "App development", "Meta Ads", "Video editing", "Branding & design"]
       }
     </script>
+    <script>
+      /* Fallback for GitHub Pages root static serving: redirect to compiled docs if unbundled */
+      if (
+        window.location.hostname.endsWith('github.io') &&
+        (window.location.pathname === '/wolvo' || window.location.pathname === '/wolvo/')
+      ) {
+        fetch('./docs/index.html', { method: 'HEAD' })
+          .then(function (r) { if (r.ok) window.location.replace('./docs/'); })
+          .catch(function () {});
+      }
+    </script>
+    <script type="module" crossorigin src="./assets/index-nOwMpbrC.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/x-3N6SixHZ.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-DennM0OL.css">
   </head>
   <body>
     <div id="root"></div>
@@ -90,7 +104,6 @@
         Wolvo — freelance digital agency for web development, app development, Meta Ads and video editing.
         Please enable JavaScript for the full experience.
       </div>
-    </noscript>
-    <script type="module" src="/src/main.tsx"></script>
+    </noscript>
   </body>
 </html>

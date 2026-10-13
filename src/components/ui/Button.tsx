@@ -1,48 +1,69 @@
-"use client";
+import { useRef, type ComponentPropsWithoutRef, type ReactNode } from 'react';
+import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { useMagnetic } from '@/hooks/useMagnetic';
 
-import { useRef, type ComponentPropsWithoutRef, type PointerEvent } from "react";
-import { ArrowUpRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+type Variant = 'primary' | 'secondary' | 'ghost';
+type Size = 'sm' | 'md' | 'lg';
+type IconName = 'arrow-right' | 'arrow-up-right' | 'arrow-down' | 'none';
 
-type Variant = "primary" | "secondary" | "ghost";
+const ICONS = { 'arrow-right': ArrowRight, 'arrow-up-right': ArrowUpRight, 'arrow-down': ArrowDown } as const;
 
-const base =
-  "group relative inline-flex min-h-12 whitespace-nowrap items-center justify-center gap-3 overflow-hidden rounded-[4px] px-6 font-display text-[0.8rem] font-medium uppercase tracking-[0.16em] transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-out-expo";
+interface BaseProps {
+  variant?: Variant;
+  size?: Size;
+  icon?: IconName;
+  block?: boolean;
+  /** Desktop-only magnetic pull (primary CTAs). */
+  magnetic?: boolean;
+  children: ReactNode;
+  className?: string;
+}
 
-const variants: Record<Variant, string> = {
-  primary:
-    "bg-electric text-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.18)] hover:bg-sky hover:shadow-[0_10px_40px_-12px_rgb(13_121_253/0.8)]",
-  secondary: "border border-line bg-navy-950/30 text-ink hover:border-sky/70 hover:bg-navy-800/60",
-  ghost: "px-0! text-ink hover:text-cyan",
-};
+type ButtonAsButton = BaseProps & Omit<ComponentPropsWithoutRef<'button'>, keyof BaseProps> & { href?: undefined };
+type ButtonAsLink = BaseProps & Omit<ComponentPropsWithoutRef<'a'>, keyof BaseProps> & { href: string };
 
-type Props = ComponentPropsWithoutRef<"a"> & { variant?: Variant; icon?: boolean; magnetic?: boolean };
+export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
-/** Link-styled call to action. Magnetic hover is pointer-fine only and skips reduced motion. */
-export function ButtonLink({ variant = "primary", icon = true, magnetic = false, className, children, ...rest }: Props) {
-  const ref = useRef<HTMLAnchorElement>(null);
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  icon = 'arrow-right',
+  block,
+  magnetic,
+  children,
+  className,
+  ...rest
+}: ButtonProps) {
+  const wrapRef = useRef<HTMLSpanElement>(null);
+  useMagnetic(wrapRef, { enabled: !!magnetic });
 
-  const onMove = (e: PointerEvent<HTMLAnchorElement>) => {
-    if (!magnetic || e.pointerType !== "mouse" || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const el = ref.current!;
-    const r = el.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width - 0.5) * 10;
-    const y = ((e.clientY - r.top) / r.height - 0.5) * 8;
-    el.style.transform = `translate(${x}px, ${y}px)`;
-  };
-  const onLeave = () => {
-    if (ref.current) ref.current.style.transform = "";
-  };
+  const Icon = icon !== 'none' ? ICONS[icon] : null;
+  const classes = ['btn', `btn--${variant}`, size !== 'md' && `btn--${size}`, block && 'btn--block', className]
+    .filter(Boolean)
+    .join(' ');
 
+  const content = (
+    <span className="btn__label" data-magnetic-label>
+      {children}
+      {Icon && <Icon className={`btn__icon btn__icon--${icon}`} strokeWidth={2} aria-hidden="true" />}
+    </span>
+  );
+
+  const element =
+    'href' in rest && rest.href !== undefined ? (
+      <a className={classes} {...(rest as ComponentPropsWithoutRef<'a'>)}>
+        {content}
+      </a>
+    ) : (
+      <button type="button" className={classes} {...(rest as ComponentPropsWithoutRef<'button'>)}>
+        {content}
+      </button>
+    );
+
+  if (!magnetic) return element;
   return (
-    <a ref={ref} className={cn(base, variants[variant], className)} onPointerMove={onMove} onPointerLeave={onLeave} {...rest}>
-      <span className="relative">{children}</span>
-      {icon && (
-        <ArrowUpRight
-          aria-hidden
-          className="relative size-4 transition-transform duration-300 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-        />
-      )}
-    </a>
+    <span ref={wrapRef} className={`magnetic${block ? ' btn--block' : ''}`}>
+      {element}
+    </span>
   );
 }

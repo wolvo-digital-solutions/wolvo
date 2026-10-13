@@ -1,23 +1,50 @@
-import Image from "next/image";
-import { cn } from "@/lib/utils";
+interface LogoProps {
+  className?: string;
+  /** Render as a link to the top of the page. */
+  href?: string;
+  showWordmark?: boolean;
+  /** Load eagerly (above-the-fold placements such as the navbar). */
+  priority?: boolean;
+}
 
-/**
- * The supplied WOLVO symbol (background removed, geometry untouched) plus the
- * company name set in the display face. Swap in the official vector lockup
- * once it is supplied: public/assets/branding/wolvo-logo.svg
- */
-export function Logo({ className, showName = true, priority }: { className?: string; showName?: boolean; priority?: boolean }) {
+const MARK = { webp: '/brand/wolvo-mark.webp', png: '/brand/wolvo-mark.png', width: 218, height: 160 } as const;
+
+/** Official Wolvo mark — the wolf-headed "W" from the brand artwork (transparent, works on light and dark). */
+export function LogoMark({ className = 'logo__mark', priority = false }: { className?: string; priority?: boolean }) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <Image
-        src="/assets/branding/wolvo-symbol-160.webp"
-        alt={showName ? "" : "WOLVO"}
-        width={160}
-        height={118}
-        priority={priority}
-        className="h-7 w-auto"
+    <picture className={className}>
+      <source type="image/webp" srcSet={MARK.webp} />
+      <img
+        src={MARK.png}
+        width={MARK.width}
+        height={MARK.height}
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        loading={priority ? 'eager' : 'lazy'}
+        draggable={false}
       />
-      {showName && <span className="font-display text-[1.05rem] font-semibold tracking-[0.2em]">WOLVO</span>}
+    </picture>
+  );
+}
+
+export function Logo({ className = '', href, showWordmark = true, priority = false }: LogoProps) {
+  const content = (
+    <>
+      <LogoMark priority={priority} />
+      {showWordmark && <span className="logo__word">Wolvo</span>}
+    </>
+  );
+  if (href) {
+    return (
+      <a href={href} className={`logo ${className}`} aria-label="Wolvo — back to top">
+        {content}
+      </a>
+    );
+  }
+  return (
+    <span className={`logo ${className}`} role="img" aria-label="Wolvo">
+      {content}
     </span>
   );
 }

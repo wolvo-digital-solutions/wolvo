@@ -1,131 +1,200 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-import { Menu, X } from "lucide-react";
-import { navLinks, socials } from "@/data/company";
-import { Logo } from "@/components/ui/Logo";
-import { ButtonLink } from "@/components/ui/Button";
-import { useExperience } from "@/components/motion/ExperienceProvider";
-import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from 'react';
+import { Mail, Menu, X } from 'lucide-react';
+import { gsap, MQ, ScrollTrigger, useGSAP } from '@/animations/gsap';
+import { lockScroll, prefersReducedMotion, unlockScroll } from '@/animations/smoothScroll';
+import { useActiveSection } from '@/hooks/useActiveSection';
+import { useUI } from '@/context/UIContext';
+import { primaryNav, sectionIds } from '@/data/navigation';
+import { site, socialLinks } from '@/data/site';
+import { padNumber } from '@/lib/format';
+import { Button } from '@/components/ui/Button';
+import { Logo } from '@/components/ui/Logo';
+import { SocialList } from '@/components/ui/SocialIcon';
+import { StatusPill } from '@/components/ui/StatusPill';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import './Navbar.css';
 
 export function Navbar() {
-  const { lockScroll } = useExperience();
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuTl = useRef<gsap.core.Timeline | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const active = useActiveSection(sectionIds);
+  const { openContact } = useUI();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  useGSAP(
+    () => {
+      const header = headerRef.current!;
+      const panel = panelRef.current!;
 
+      // Scrolled state — background, blur and border fade in after the first scroll.
+      const setScrolled = (y: number) => header.classList.toggle('is-scrolled', y > 32);
+      setScrolled(window.scrollY);
+      ScrollTrigger.create({ start: 0, end: 'max', onUpdate: (self) => setScrolled(self.scroll()) });
+
+      // Mobile menu timeline (played / reversed on toggle).
+      gsap.set(panel, { autoAlpha: 0 });
+      menuTl.current = gsap
+        .timeline({ paused: true, defaults: { ease: 'power3.out' } })
+        .to(panel, { autoAlpha: 1, duration: 0.35 })
+        .fromTo(panel.querySelector('.mobile-menu__glow'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.9 }, 0)
+        .fromTo(
+          panel.querySelectorAll('[data-menu-item]'),
+          { y: 36, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.6, stagger: 0.055 },
+          0.08,
+        );
+
+      // Load sequence: logo → links → CTA.
+      const mm = gsap.matchMedia();
+      mm.add(MQ.motion, () => {
+        gsap
+          .timeline({ delay: 0.15 })
+          .from('.nav__logo', { y: -12, opacity: 0, duration: 0.7 })
+          .from('.nav__links li', { y: -10, opacity: 0, duration: 0.6, stagger: 0.06 }, '-=0.45')
+          .from('.nav__actions > *', { y: -10, opacity: 0, duration: 0.6, stagger: 0.08 }, '-=0.45');
+      });
+    },
+    { scope: headerRef },
+  );
+
+  // Open / close side effects: animation, scroll lock, inert page, focus.
   useEffect(() => {
-    lockScroll(open);
-    if (!open) return;
-    const first = menuRef.current?.querySelector<HTMLElement>("a");
-    first?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setOpen(false);
-        toggleRef.current?.focus();
-      }
-      // Keep focus inside the open menu.
-      if (e.key === "Tab" && menuRef.current) {
-        // DOM order: the toggle sits before the menu panel.
-        const f = [toggleRef.current!, ...Array.from(menuRef.current.querySelectorAll<HTMLElement>("a, button"))];
-        const i = f.indexOf(document.activeElement as HTMLElement);
-        if (e.shiftKey && i <= 0) {
-          e.preventDefault();
-          f[f.length - 1].focus();
-        } else if (!e.shiftKey && i === f.length - 1) {
-          e.preventDefault();
-          f[0].focus();
+    const tl = menuTl.current;
+    if (!tl) return;
+    const page = [document.getElementById('main'), document.querySelector('footer')].filter(Boolean) as HTMLElement[];
+
+    if (menuOpen) {
+      lockScroll();
+      page.forEach((el) => (el.inert = true));
+      if (prefersReducedMotion()) tl.progress(1);
+      else tl.timeScale(1).play();
+      // Focus once the panel is visible (autoAlpha flips visibility on the first frame).
+      const focusTimer = window.setTimeout(
+        () => panelRef.current?.querySelector<HTMLElement>('.mobile-menu__link')?.focus({ preventScroll: true }),
+        60,
+      );
+
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setMenuOpen(false);
+          toggleRef.current?.focus();
         }
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, lockScroll]);
+      };
+      const desktop = window.matchMedia(MQ.desktop);
+      const onResize = () => desktop.matches && setMenuOpen(false);
+      document.addEventListener('keydown', onKey);
+      desktop.addEventListener('change', onResize);
+      return () => {
+        window.clearTimeout(focusTimer);
+        document.removeEventListener('keydown', onKey);
+        desktop.removeEventListener('change', onResize);
+        page.forEach((el) => (el.inert = false));
+        unlockScroll();
+      };
+    }
+
+    if (tl.progress() > 0) {
+      if (prefersReducedMotion()) tl.progress(0);
+      else tl.timeScale(1.7).reverse();
+    }
+  }, [menuOpen]);
+
+  const startProject = (source: string) => {
+    setMenuOpen(false);
+    openContact({ source });
+  };
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500",
-        scrolled && !open
-          ? "border-b border-line/60 bg-navy-950/70 backdrop-blur-md"
-          : "border-b border-transparent bg-transparent",
-      )}
-    >
-      <nav aria-label="Primary" className="container-x flex h-[var(--nav-h)] items-center justify-between gap-6">
-        <a href="#top" className="relative z-10 -m-2 p-2" aria-label="WOLVO — back to top">
-          <Logo priority />
-        </a>
+    <header ref={headerRef} className={`nav${menuOpen ? ' is-menu-open' : ''}`}>
+      <div className="nav__bar container">
+        <Logo href="#home" className="nav__logo" priority />
 
-        <ul className="hidden items-center gap-10 md:flex">
-          {navLinks.map((l) => (
-            <li key={l.href}>
-              <a
-                href={l.href}
-                className="relative py-2 font-display text-[0.78rem] uppercase tracking-[0.2em] text-muted transition-colors hover:text-ink after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-sky after:transition-transform after:duration-500 hover:after:scale-x-100"
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <nav className="nav__primary" aria-label="Primary">
+          <ul className="nav__links" role="list">
+            {primaryNav.map((item) => {
+              const isActive = active === item.href.slice(1);
+              return (
+                <li key={item.href}>
+                  <a href={item.href} className={`nav__link${isActive ? ' is-active' : ''}`} aria-current={isActive ? 'true' : undefined}>
+                    {item.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
 
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:block">
-            <ButtonLink href="#contact" className="min-h-10 px-5 text-[0.72rem]">
-              Start a project
-            </ButtonLink>
-          </div>
+        <div className="nav__actions">
+          <ThemeToggle className="nav__theme-toggle" />
+          <Button size="sm" magnetic className="nav__cta" onClick={() => startProject('nav')}>
+            Start a Project
+          </Button>
           <button
             ref={toggleRef}
             type="button"
-            className="relative z-10 inline-flex size-11 items-center justify-center rounded-[4px] border border-line text-ink md:hidden"
-            aria-expanded={open}
+            className="nav__toggle"
+            aria-expanded={menuOpen}
             aria-controls="mobile-menu"
-            aria-label={open ? "Close menu" : "Open menu"}
-            onClick={() => setOpen((o) => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMenuOpen((open) => !open)}
           >
-            {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
+            {menuOpen ? <X strokeWidth={1.85} aria-hidden="true" /> : <Menu strokeWidth={1.85} aria-hidden="true" />}
           </button>
         </div>
-      </nav>
+      </div>
 
       <div
         id="mobile-menu"
-        ref={menuRef}
-        hidden={!open}
-        className="fixed inset-0 bg-navy-950/97 backdrop-blur-lg md:hidden"
+        ref={panelRef}
+        className="mobile-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
+        data-lenis-prevent
       >
-        <div className="container-x flex h-full flex-col justify-between pb-10 pt-[calc(var(--nav-h)+2rem)]">
-          <ul className="space-y-2">
-            {navLinks.map((l, i) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className="flex items-baseline gap-4 py-3 font-display text-4xl uppercase tracking-tight"
-                >
-                  <span className="text-xs tracking-[0.2em] text-sky">0{i + 1}</span>
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <div className="space-y-6">
-            <ButtonLink href="#contact" onClick={() => setOpen(false)} className="w-full">
-              Start a project
-            </ButtonLink>
-            <p className="text-sm text-muted">
-              {socials.map((s) => s.label).join(" · ")}
-              <span className="placeholder ml-2 text-[0.7rem]">[SOCIAL URLS — TO BE PROVIDED]</span>
-            </p>
+        <span className="mobile-menu__glow" aria-hidden="true" />
+        <div className="mobile-menu__inner container">
+          <nav aria-label="Mobile">
+            <ol className="mobile-menu__links" role="list">
+              {primaryNav.map((item, i) => {
+                const isActive = active === item.href.slice(1);
+                return (
+                  <li key={item.href} data-menu-item>
+                    <a
+                      href={item.href}
+                      className={`mobile-menu__link${isActive ? ' is-active' : ''}`}
+                      aria-current={isActive ? 'true' : undefined}
+                      tabIndex={menuOpen ? 0 : -1}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <span className="mobile-menu__index">{padNumber(i + 1, 2)}</span>
+                      {item.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ol>
+          </nav>
+
+          <div className="mobile-menu__footer">
+            <div data-menu-item>
+              <Button block size="lg" onClick={() => startProject('mobile-menu')} tabIndex={menuOpen ? 0 : -1}>
+                Start a Project
+              </Button>
+            </div>
+            <div className="mobile-menu__meta" data-menu-item>
+              <ThemeToggle showLabel className="mobile-menu__theme-toggle" />
+              <a href={`mailto:${site.email}`} className="mobile-menu__email" tabIndex={menuOpen ? 0 : -1}>
+                <Mail strokeWidth={1.85} aria-hidden="true" />
+                {site.email}
+              </a>
+              <StatusPill />
+            </div>
+            <div data-menu-item>
+              <SocialList links={socialLinks} />
+            </div>
           </div>
         </div>
       </div>

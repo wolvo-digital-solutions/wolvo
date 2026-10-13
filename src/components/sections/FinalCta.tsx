@@ -1,114 +1,98 @@
-"use client";
+import { useRef } from 'react';
+import { Mail } from 'lucide-react';
+import { gsap, ScrollTrigger } from '@/animations/gsap';
+import { useSectionMotion } from '@/hooks/useSectionMotion';
+import { useUI } from '@/context/UIContext';
+import { images } from '@/data/images';
+import { site } from '@/data/site';
+import { services } from '@/data/services';
+import { Button } from '@/components/ui/Button';
+import { Picture } from '@/components/ui/Picture';
+import { StatusPill } from '@/components/ui/StatusPill';
+import './FinalCTA.css';
 
-import { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
-import { company } from "@/data/company";
-import { useExperience } from "@/components/motion/ExperienceProvider";
-import { ButtonLink } from "@/components/ui/Button";
-import dynamic from "next/dynamic";
+export function FinalCTA() {
+  const ref = useRef<HTMLElement>(null);
+  const { openContact } = useUI();
 
-// Split the form (and its validation library) out of the initial bundle; still server-rendered.
-const ContactForm = dynamic(() => import("@/components/ui/ContactForm").then((m) => m.ContactForm));
+  useSectionMotion(
+    ref,
+    ({ scope }) => {
+      const q = gsap.utils.selector(scope);
+      const panel = q('.cta__panel')[0];
 
-/**
- * The journey closes where it began: the supplied wolf frame returns, lit by
- * the same blue energy, and hands over to the enquiry form.
- */
-export function FinalCta() {
-  const { ready, reducedMotion } = useExperience();
-  const root = useRef<HTMLElement>(null);
-
-  useGSAP(
-    () => {
-      if (!ready || reducedMotion) return;
-      const q = gsap.utils.selector(root);
-      const stage = q("[data-cta-stage]")[0];
-      gsap
-        .timeline({ scrollTrigger: { trigger: stage, start: "top bottom", end: "bottom top", scrub: 0.6 } })
-        .fromTo(q("[data-wolf]"), { scale: 1.18, yPercent: 6, opacity: 0.35 }, { scale: 1, yPercent: -4, opacity: 1, ease: "none" }, 0)
-        .fromTo(q("[data-energy-line]"), { scaleX: 0 }, { scaleX: 1, ease: "none" }, 0.1);
-      gsap.from(q("[data-cta-copy] > *"), {
-        autoAlpha: 0,
-        y: 36,
-        stagger: 0.12,
-        duration: 1.3,
-        ease: "expo.out",
-        scrollTrigger: { trigger: stage, start: "top 55%", once: true },
-      });
+      // Background reveal: panel opens up as it scrolls into view.
+      gsap.fromTo(
+        panel,
+        { scale: 0.92, '--cta-radius': '56px' },
+        { scale: 1, '--cta-radius': '32px', ease: 'none', scrollTrigger: { trigger: panel, start: 'top bottom', end: 'top 35%', scrub: true } },
+      );
+      gsap.fromTo(
+        q('.cta__bg img'),
+        { yPercent: 8, scale: 1.15 },
+        { yPercent: -4, scale: 1.05, ease: 'none', scrollTrigger: { trigger: panel, start: 'top bottom', end: 'bottom top', scrub: true } },
+      );
     },
-    { scope: root, dependencies: [ready, reducedMotion] },
+    {
+      intro: (scope) => {
+        const q = gsap.utils.selector(scope);
+        // Slow ambient light drift — only while the panel is on screen.
+        const drift = gsap
+          .timeline({ paused: true })
+          .to(q('.cta__glow--a'), { xPercent: 18, yPercent: -12, duration: 9, ease: 'sine.inOut', yoyo: true, repeat: -1 }, 0)
+          .to(q('.cta__glow--b'), { xPercent: -20, yPercent: 14, duration: 11, ease: 'sine.inOut', yoyo: true, repeat: -1 }, 0);
+        ScrollTrigger.create({
+          trigger: q('.cta__panel')[0],
+          start: 'top bottom',
+          end: 'bottom top',
+          onToggle: (self) => (self.isActive ? drift.play() : drift.pause()),
+        });
+      },
+    },
   );
 
   return (
-    <section id="contact" ref={root} aria-labelledby="cta-title" className="relative">
-      <div data-cta-stage className="relative flex min-h-svh items-center overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          data-wolf
-          src="/assets/video-frames/hero/poster-lg.webp"
-          srcSet="/assets/video-frames/hero/poster-sm.webp 900w, /assets/video-frames/hero/poster-lg.webp 1600w"
-          sizes="100vw"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-y-0 left-0 h-full w-full object-cover object-center will-change-transform md:left-[22%]"
-        />
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-navy-950 via-navy-950/30 to-navy-950" />
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-navy-950/85 via-navy-950/20 to-transparent" />
+    <section id="contact" ref={ref} className="cta section" aria-labelledby="cta-title">
+      <div className="container">
+        <div className="cta__panel theme-dark noise">
+          <Picture set={images.ctaWaves} alt="" sizes="(min-width: 1280px) 1280px, 100vw" className="cta__bg" />
+          <span className="cta__glow cta__glow--a" aria-hidden="true" />
+          <span className="cta__glow cta__glow--b" aria-hidden="true" />
+          <span className="cta__grid grid-texture" aria-hidden="true" />
 
-        <div className="container-x relative" data-cta-copy>
-          <p className="eyebrow">
-            <span className="text-muted">11</span>
-            <span aria-hidden className="mx-3 inline-block h-px w-8 translate-y-[-3px] bg-sky/60" />
-            Start a project
-          </p>
-          <h2 id="cta-title" className="mt-6 text-[clamp(3rem,8vw,8rem)] uppercase leading-[0.92]">
-            Have an idea?
-            <br />
-            <span className="text-brand">Let&rsquo;s build it.</span>
-          </h2>
-          <p className="mt-8 max-w-md text-lg text-ink/80">
-            Tell us what you&rsquo;re planning — an app, a website, a brand or a campaign — and we&rsquo;ll get back to you with next
-            steps.
-          </p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <ButtonLink href="#enquiry" magnetic>
-              Start a project
-            </ButtonLink>
-            <ButtonLink href={company.email ? `mailto:${company.email}` : "#enquiry"} variant="secondary" icon={false}>
-              Talk to WOLVO
-            </ButtonLink>
-          </div>
-        </div>
-        <div
-          aria-hidden
-          data-energy-line
-          className="absolute inset-x-0 bottom-0 h-px origin-left bg-gradient-to-r from-royal via-electric to-cyan shadow-[0_0_20px_rgb(24_172_253/0.8)]"
-        />
-      </div>
-
-      <div id="enquiry" className="relative scroll-mt-[var(--nav-h)] py-24 md:py-32">
-        <div className="container-x grid gap-14 lg:grid-cols-[1fr_1.6fr]">
-          <div>
-            <h3 className="font-display text-h3 uppercase">Project enquiry</h3>
-            <p className="mt-5 max-w-sm text-muted">A few details help us understand your idea and reply with something useful.</p>
-            <dl className="mt-10 space-y-5 text-sm">
-              <div>
-                <dt className="text-xs uppercase tracking-[0.2em] text-faint">Email</dt>
-                <dd className="mt-1">
-                  {company.email ? (
-                    <a href={`mailto:${company.email}`} className="hover:text-cyan">
-                      {company.email}
-                    </a>
-                  ) : (
-                    <span className="placeholder">[CONTACT EMAIL — TO BE PROVIDED]</span>
-                  )}
-                </dd>
-              </div>
-            </dl>
-          </div>
-          <div className="panel rounded-[8px] p-6 md:p-10">
-            <ContactForm />
+          <div className="cta__content">
+            <p className="eyebrow cta__eyebrow" data-reveal="fade">
+              <span className="eyebrow__index">07</span>
+              <span className="eyebrow__line" aria-hidden="true" />
+              Let’s work together
+            </p>
+            <h2 id="cta-title" className="cta__title" data-reveal="lines">
+              Have a Project <span className="text-gradient">in Mind?</span>
+            </h2>
+            <p className="cta__text lead" data-reveal="up" data-reveal-delay="0.1">
+              Tell us about your idea — a website, an app, a campaign or a video. We’ll reply with clear next steps, a realistic
+              timeline and an honest quote.
+            </p>
+            <div className="cta__actions" data-reveal="up" data-reveal-delay="0.2">
+              <Button size="lg" magnetic onClick={() => openContact({ source: 'final-cta' })}>
+                Start a Project
+              </Button>
+              <a href={`mailto:${site.email}`} className="cta__email">
+                <Mail strokeWidth={1.85} aria-hidden="true" />
+                <span>
+                  <span className="cta__email-label">Or email us</span>
+                  {site.email}
+                </span>
+              </a>
+            </div>
+            <div className="cta__meta" data-reveal="fade" data-reveal-delay="0.3">
+              <StatusPill />
+              <ul className="cta__services" role="list" aria-label="Services">
+                {services.map((s) => (
+                  <li key={s.id}>{s.shortTitle}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>

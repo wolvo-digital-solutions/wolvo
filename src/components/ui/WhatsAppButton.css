@@ -1,0 +1,180 @@
+/* ==========================================================================
+   Floating WhatsApp contact — official glyph on WhatsApp green, a quiet
+   label pill on hover/focus, safe-area aware, lifts above the footer bar.
+   ========================================================================== */
+
+.wa {
+  --wa-size: 56px;
+  --wa-green: #25d366;
+  --wa-green-deep: #1aa851;
+  --wa-offset: clamp(16px, 2.4vw, 28px);
+  --wa-lift: 0px;
+  position: fixed;
+  right: calc(var(--wa-offset) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--wa-offset) + env(safe-area-inset-bottom, 0px));
+  z-index: var(--z-float);
+  pointer-events: none;
+  opacity: 0;
+  /* Hidden = also out of the tab order (visibility flips after the fade). */
+  visibility: hidden;
+  transform: translateY(calc(16px - var(--wa-lift))) scale(0.9);
+  transition:
+    opacity 0.4s var(--ease-out),
+    transform 0.5s var(--ease-out),
+    visibility 0s linear 0.5s;
+}
+
+.wa.is-visible:not(.is-tucked) {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(calc(-1 * var(--wa-lift)));
+  transition:
+    opacity 0.4s var(--ease-out),
+    transform 0.5s var(--ease-out),
+    visibility 0s;
+}
+
+.wa.is-visible:not(.is-tucked) .wa-btn {
+  pointer-events: auto;
+}
+
+.wa-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-pill);
+  color: #fff;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wa-btn__disc {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--wa-size);
+  height: var(--wa-size);
+  border-radius: 50%;
+  background: linear-gradient(150deg, #2ee27a 0%, var(--wa-green) 45%, var(--wa-green-deep) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 10px 24px -8px rgba(18, 140, 70, 0.55),
+    0 2px 6px rgba(5, 10, 24, 0.18);
+  transition:
+    transform 0.35s var(--ease-spring),
+    box-shadow 0.35s var(--ease-out);
+}
+
+/* Soft halo that separates the button from busy backgrounds. */
+.wa-btn__disc::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1px solid rgba(37, 211, 102, 0.28);
+  opacity: 0;
+  transform: scale(0.92);
+  transition:
+    opacity 0.35s var(--ease-out),
+    transform 0.35s var(--ease-out);
+}
+
+.wa-btn__icon {
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.12));
+}
+
+/* Label pill — desktop hover / keyboard focus. */
+.wa-btn__label {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(8px, -50%);
+  transition:
+    opacity 0.25s var(--ease-out),
+    transform 0.35s var(--ease-out);
+  pointer-events: none;
+}
+
+.wa-btn__status {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--wa-green);
+  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.18);
+}
+
+@media (hover: hover) {
+  .wa-btn:hover .wa-btn__disc {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.32),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 16px 32px -10px rgba(18, 140, 70, 0.6),
+      0 3px 8px rgba(5, 10, 24, 0.2);
+  }
+
+  .wa-btn:hover .wa-btn__disc::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .wa-btn:hover .wa-btn__label {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+.wa-btn:focus-visible {
+  outline: none;
+}
+
+.wa-btn:focus-visible .wa-btn__disc {
+  outline: 2px solid var(--color-primary-hover);
+  outline-offset: 4px;
+}
+
+.wa-btn:focus-visible .wa-btn__label {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.wa-btn:active .wa-btn__disc {
+  transform: scale(0.94);
+}
+
+@media (max-width: 639px) {
+  .wa {
+    --wa-size: 52px;
+  }
+
+  .wa-btn__icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .wa-btn__label {
+    display: none;
+  }
+}
+
+@media print {
+  .wa {
+    display: none;
+  }
+}

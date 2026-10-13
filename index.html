@@ -2,16 +2,95 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WOLVO — From Ideas to Impactful Solutions</title>
-    <meta name="description" content="WOLVO is a modern IT &amp; digital solutions company — software, mobile apps, branding, social media, ads and video." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Wolvo — Freelance Digital Agency | Web, Apps, Meta Ads &amp; Video</title>
+    <meta
+      name="description"
+      content="Wolvo is a freelance digital agency building fast websites, mobile apps, Meta Ads campaigns and scroll-stopping video content for brands, startups and creators."
+    />
+    <meta name="theme-color" content="#07090e" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="author" content="Wolvo" />
+    <link rel="canonical" href="__SITE_URL__/" />
+
+    <!-- Apply the saved day/night theme before first paint (no flash of the wrong theme). -->
+    <script>
+      (function () {
+        var theme = 'dark';
+        try {
+          if (localStorage.getItem('wolvo_theme') === 'light') theme = 'light';
+        } catch (e) {}
+        var root = document.documentElement;
+        root.setAttribute('data-theme', theme);
+        root.style.colorScheme = theme;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'light' ? '#f5f7fb' : '#07090e');
+      })();
+    </script>
+
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Wolvo" />
+    <meta property="og:title" content="Wolvo — Creative Ideas. Smart Technology. Real Results." />
+    <meta
+      property="og:description"
+      content="Websites, mobile apps, Meta Ads and video editing — designed, built and launched by one flexible freelance team."
+    />
+    <meta property="og:url" content="__SITE_URL__/" />
+    <meta property="og:image" content="__SITE_URL__/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Wolvo — Creative Ideas. Smart Technology. Real Results." />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Wolvo — Freelance Digital Agency" />
+    <meta
+      name="twitter:description"
+      content="Websites, mobile apps, Meta Ads and video editing — designed, built and launched by one flexible freelance team."
+    />
+    <meta name="twitter:image" content="__SITE_URL__/og-image.jpg" />
+
+    <!-- Critical hero image -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      imagesrcset="/images/hero-workspace-640.avif 640w, /images/hero-workspace-960.avif 960w, /images/hero-workspace-1280.avif 1280w, /images/hero-workspace-1672.avif 1672w"
+      imagesizes="(min-width: 1024px) 104vw, calc(100vw - 40px)"
+      fetchpriority="high"
+      media="(min-width: 768px) and ((pointer: fine) or (min-height: 501px) or (orientation: portrait))"
+    />
+    <link rel="preload" as="image" type="image/webp" href="/brand/wolvo-mark.webp" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Wolvo",
+        "url": "__SITE_URL__/",
+        "logo": "__SITE_URL__/icon-512.png",
+        "image": "__SITE_URL__/og-image.jpg",
+        "description": "Freelance digital agency providing web development, app development, Meta Ads, video editing, and branding & design.",
+        "knowsAbout": ["Web development", "App development", "Meta Ads", "Video editing", "Branding & design"]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <noscript>
+      <div style="padding:24px;font-family:system-ui,sans-serif;color:#f8fafc;background:#07090e">
+        Wolvo — freelance digital agency for web development, app development, Meta Ads and video editing.
+        Please enable JavaScript for the full experience.
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,107 +1,182 @@
-"use client";
-
-import Image from "next/image";
-import { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
-import { company } from "@/data/company";
-import { services } from "@/data/services";
-import { useExperience } from "@/components/motion/ExperienceProvider";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Content, isPlaceholder } from "@/components/ui/Placeholder";
-
-// Built only from supplied positioning (services, "ideas → digital → impact",
-// global ambition). Mission is left as a placeholder until WOLVO provides it.
-const statement =
-  "WOLVO is a digital technology and creative studio. We bring app development, web development, video, design, advertising and social media under one roof — so the ideas behind a business can become products, brands and campaigns people actually use.";
-
-const pillars = [
-  {
-    title: "What we are",
-    body: "A studio where technology and creativity work as one team — building, designing and promoting under the same roof.",
-  },
-  {
-    title: "Our approach",
-    body: "Clarity before complexity. We understand the idea first, then choose the design, technology and channels that serve it.",
-  },
-  {
-    title: "Our vision",
-    body: "To help ambitious businesses — wherever they are — turn ideas into digital impact.",
-  },
-  { title: "Our mission", body: "[MISSION STATEMENT — TO BE PROVIDED]" },
-];
+import { useRef } from 'react';
+import { gsap, MQ } from '@/animations/gsap';
+import { countUp } from '@/animations/reveal';
+import { useSectionMotion } from '@/hooks/useSectionMotion';
+import { useUI } from '@/context/UIContext';
+import { proofPoints, stats } from '@/data/about';
+import { founders } from '@/data/founders';
+import { images } from '@/data/images';
+import { padNumber } from '@/lib/format';
+import { LogoMark } from '@/components/ui/Logo';
+import { Picture } from '@/components/ui/Picture';
+import { SectionHeading } from '@/components/ui/SectionHeading';
+import { FounderCard } from './FounderCard';
+import './About.css';
 
 export function About() {
-  const { ready, reducedMotion } = useExperience();
-  const root = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLElement>(null);
+  const { openContact } = useUI();
 
-  useGSAP(
-    () => {
-      if (!ready || reducedMotion) return;
-      const q = gsap.utils.selector(root);
-      // Words light up as the statement moves through the viewport.
+  useSectionMotion(
+    ref,
+    ({ scope }) => {
+      const q = gsap.utils.selector(scope);
+
+      // Image parallax inside the masked visual.
       gsap.fromTo(
-        q("[data-word]"),
-        { color: "rgb(95 111 136 / 0.45)" },
-        {
-          color: "rgb(247 250 255 / 1)",
-          stagger: 0.1,
-          ease: "none",
-          scrollTrigger: { trigger: q("[data-statement]")[0], start: "top 80%", end: "bottom 45%", scrub: 0.6 },
-        },
+        q('.about__visual-parallax'),
+        { yPercent: -4.5 },
+        { yPercent: 4.5, ease: 'none', scrollTrigger: { trigger: q('.about__visual')[0], start: 'top bottom', end: 'bottom top', scrub: true } },
       );
-      gsap.fromTo(
-        q("[data-bg-mark]"),
-        { yPercent: 12, rotate: -4 },
-        { yPercent: -12, rotate: 2, ease: "none", scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: true } },
-      );
+
+      // Founder photos settle as they scroll through.
+      q('[data-founder] .founder-card__media > *').forEach((img) => {
+        gsap.fromTo(img, { scale: 1.12 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom 40%', scrub: true } });
+      });
     },
-    { scope: root, dependencies: [ready, reducedMotion] },
+    {
+      intro: (scope) => {
+        const q = gsap.utils.selector(scope);
+        const isDesktop = window.matchMedia(MQ.desktop).matches;
+
+        // Stats count upward on entry.
+        q('[data-count]').forEach((el) => {
+          countUp(el, Number(el.dataset.count), { pad: Number(el.dataset.pad ?? 0), suffix: el.dataset.suffix ?? '' });
+        });
+
+        // Studio caption rises into place after the photo is revealed.
+        const card = q('.about-card')[0];
+        gsap.fromTo(
+          card,
+          { y: 32, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.9, delay: 0.5, clearProps: 'transform', scrollTrigger: { trigger: card, start: 'top 92%', once: true } },
+        );
+
+        // Founders reveal from opposite directions on desktop; connecting line draws between them.
+        const founders = q('.about__founders')[0];
+        q('[data-founder]').forEach((el, i) => {
+          gsap.from(el, {
+            x: isDesktop ? (i % 2 ? 70 : -70) : 0,
+            y: isDesktop ? 0 : 40,
+            opacity: 0,
+            duration: 1,
+            delay: i * 0.12,
+            clearProps: 'transform,opacity',
+            scrollTrigger: { trigger: founders, start: 'top 82%', once: true },
+          });
+        });
+        gsap.from(q('.about__founders-line'), {
+          scaleX: 0,
+          duration: 1.4,
+          ease: 'power3.inOut',
+          scrollTrigger: { trigger: founders, start: 'top 75%', once: true },
+        });
+      },
+    },
   );
 
   return (
-    <section id="about" ref={root} aria-labelledby="about-title" className="relative overflow-hidden py-28 md:py-40">
-      <div data-bg-mark aria-hidden className="pointer-events-none absolute -right-[12%] top-[8%] w-[60vw] max-w-[900px] opacity-[0.05]">
-        <Image src="/assets/branding/wolvo-symbol-512.webp" alt="" width={512} height={376} className="h-auto w-full" />
-      </div>
+    <section id="about" ref={ref} className="about section" aria-labelledby="about-title">
+      <div className="container">
+        <SectionHeading
+          id="about-title"
+          index="01"
+          eyebrow="About Wolvo"
+          title={
+            <>
+              We turn bold ideas into <span className="text-muted">digital products that perform.</span>
+            </>
+          }
+          description="Wolvo is a modern freelance digital agency. We bring design, development, marketing and content together in one flexible team — so every part of your digital presence works as one."
+        />
 
-      <div className="container-x relative">
-        <SectionHeading index="06" eyebrow="About WOLVO" id="about-title" title={<>We turn ideas into <span className="text-brand">digital experiences.</span></>} />
-
-        <p data-statement className="mt-14 max-w-5xl font-display text-[clamp(1.5rem,2.8vw,2.6rem)] leading-[1.25] tracking-tight">
-          {statement.split(" ").map((w, i) => (
-            <span key={i} data-word>
-              {w}{" "}
-            </span>
-          ))}
-        </p>
-
-        <div className="mt-20 grid gap-px overflow-hidden rounded-[6px] border border-line/80 bg-line/60 md:grid-cols-2 xl:grid-cols-4">
-          {pillars.map((p, i) => (
-            <div key={p.title} className="bg-navy-950 p-8" data-reveal>
-              <p className="font-display text-xs tracking-[0.24em] text-sky">0{i + 1}</p>
-              <h3 className="mt-3 font-display text-xl uppercase">{p.title}</h3>
-              <p className="mt-4 text-muted">
-                <Content value={p.body} />
-              </p>
+        <div className="about__body">
+          <figure className="about__visual" data-reveal="clip">
+            <div className="about__visual-media" data-reveal-inner>
+              <div className="about__visual-parallax">
+                <Picture
+                  set={images.aboutOffice}
+                  alt="The Wolvo studio: a shared workspace with laptops, the illuminated Wolvo logo on the wall and a whiteboard reading “Big Dreams, Small Team, Real Impact”"
+                  sizes="(min-width: 1024px) 42vw, 100vw"
+                />
+              </div>
             </div>
-          ))}
+            <div className="about-card theme-dark" aria-hidden="true">
+              <LogoMark className="about-card__mark" />
+              <div>
+                <p className="about-card__label">Inside the Wolvo studio</p>
+                <p className="about-card__title">
+                  Design. Develop. <span className="text-gradient">Grow.</span>
+                </p>
+              </div>
+            </div>
+          </figure>
+
+          <div className="about__content">
+            <p className="about__intro" data-reveal="up">
+              No layers of account managers. No templates. Just a focused team of specialists who care about your goals as much as you
+              do.
+            </p>
+            <p className="about__text" data-reveal="up" data-reveal-delay="0.1">
+              We work with you directly from the first call to launch day and beyond — keeping communication clear, iterating fast and
+              building custom solutions around what your business actually needs.
+            </p>
+
+            <ul className="about__points" role="list" data-reveal="stagger">
+              {proofPoints.map(({ title, description, icon: Icon }) => (
+                <li key={title} className="about__point" data-reveal-item>
+                  <span className="about__point-icon" aria-hidden="true">
+                    <Icon strokeWidth={1.85} />
+                  </span>
+                  <div>
+                    <h3 className="about__point-title">{title}</h3>
+                    <p className="about__point-desc">{description}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <button type="button" className="link-arrow about__cta" onClick={() => openContact({ source: 'about' })} data-reveal="up">
+              Tell us about your project
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <dl className="mt-14 grid grid-cols-2 gap-8 md:grid-cols-4">
-          {[
-            { k: "Happy clients", v: `${company.happyClients}+` },
-            { k: "Disciplines", v: String(services.length).padStart(2, "0") },
-            { k: "Founded", v: "[YEAR — TO BE PROVIDED]" },
-            { k: "Based in", v: company.location ?? "[LOCATION — TO BE PROVIDED]" },
-          ].map((f) => (
-            <div key={f.k} className="border-t border-line pt-5" data-reveal>
-              <dt className="text-xs uppercase tracking-[0.2em] text-faint">{f.k}</dt>
-              <dd className="mt-2 font-display text-3xl">
-                <Content value={f.v} className={isPlaceholder(f.v) ? "text-sm" : undefined} />
+        <dl className="about__stats" data-reveal="stagger">
+          {stats.map((stat) => (
+            <div className="stat" key={stat.label} data-reveal-item>
+              <dt className="stat__label">{stat.label}</dt>
+              <dd className="stat__value" data-count={stat.value} data-pad={stat.pad ?? 0} data-suffix={stat.suffix ?? ''}>
+                {padNumber(stat.value, stat.pad)}
+                {stat.suffix}
               </dd>
             </div>
           ))}
         </dl>
+
+        <div className="about__team">
+          <div className="about__team-head">
+            <p className="eyebrow" data-reveal="fade">
+              <span className="eyebrow__line" aria-hidden="true" />
+              Founders
+            </p>
+            <h3 className="about__team-title" data-reveal="lines">
+              The people behind Wolvo
+            </h3>
+            <p className="about__team-desc" data-reveal="up">
+              A founding team that stays hands-on — the people you talk to are the people doing the work.
+            </p>
+          </div>
+          <div className="about__founders">
+            <span className="about__founders-line" aria-hidden="true" />
+            {founders.map((founder) => (
+              <FounderCard key={founder.id} founder={founder} />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

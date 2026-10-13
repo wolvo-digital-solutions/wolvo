@@ -1,55 +1,84 @@
-import { company, navLinks, socials } from "@/data/company";
-import { Logo } from "@/components/ui/Logo";
+import { useRef } from 'react';
+import { ArrowUp, ArrowUpRight, Mail } from 'lucide-react';
+import { footerNav } from '@/data/navigation';
+import { services } from '@/data/services';
+import { site, socialLinks } from '@/data/site';
+import { useSectionMotion } from '@/hooks/useSectionMotion';
+import { useUI } from '@/context/UIContext';
+import { Logo } from '@/components/ui/Logo';
+import { SocialList } from '@/components/ui/SocialIcon';
+import { StatusPill } from '@/components/ui/StatusPill';
+import './Footer.css';
 
 export function Footer() {
+  const ref = useRef<HTMLElement>(null);
+  const { openContact } = useUI();
+  useSectionMotion(ref);
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="relative border-t border-line/70 bg-navy-950">
-      <div className="container-x grid gap-14 py-16 md:grid-cols-[1.4fr_1fr_1fr] md:py-20">
-        <div>
-          <Logo />
-          <p className="mt-6 font-display text-2xl uppercase tracking-tight md:text-3xl">
-            Ideas <span className="text-sky">→</span> Digital <span className="text-sky">→</span> Impact
+    <footer ref={ref} className="footer" aria-labelledby="footer-title">
+      <h2 id="footer-title" className="sr-only">
+        Wolvo — site footer
+      </h2>
+      <div className="container">
+        <div className="footer__top" data-reveal="stagger">
+          <div className="footer__brand" data-reveal-item>
+            <Logo />
+            <p className="footer__statement">{site.statement}</p>
+            <StatusPill />
+          </div>
+
+          <nav className="footer__col" aria-label="Footer" data-reveal-item>
+            <h3 className="footer__heading">Navigate</h3>
+            <ul className="footer__links" role="list">
+              {footerNav.map((item) => (
+                <li key={item.href}>
+                  <a href={item.href}>{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="footer__col" data-reveal-item>
+            <h3 className="footer__heading">Services</h3>
+            <ul className="footer__links" role="list">
+              {services.map((service) => (
+                <li key={service.id}>
+                  <a href="#services">{service.title}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="footer__col footer__contact" data-reveal-item>
+            <h3 className="footer__heading">Contact</h3>
+            <a href={`mailto:${site.email}`} className="footer__email">
+              <Mail strokeWidth={1.85} aria-hidden="true" />
+              {site.email}
+            </a>
+            <button type="button" className="link-arrow" onClick={() => openContact({ source: 'footer' })}>
+              Start a project
+              <ArrowUpRight strokeWidth={2} aria-hidden="true" />
+            </button>
+            <SocialList links={socialLinks} />
+          </div>
+        </div>
+
+        <div className="footer__wordmark" aria-hidden="true">
+          Wolvo
+        </div>
+
+        <div className="footer__bottom">
+          <p>
+            © {year} {site.name}. All rights reserved.
           </p>
-          <p className="mt-4 max-w-sm text-sm text-muted">{company.descriptor}.</p>
+          <p className="footer__made">Designed &amp; built by Wolvo.</p>
+          <a href="#home" className="footer__top-link">
+            Back to top
+            <ArrowUp strokeWidth={2} aria-hidden="true" />
+          </a>
         </div>
-
-        <nav aria-label="Footer">
-          <h2 className="eyebrow text-muted">Explore</h2>
-          <ul className="mt-5 space-y-3">
-            {navLinks.map((l) => (
-              <li key={l.href}>
-                <a href={l.href} className="text-ink/90 transition-colors hover:text-cyan">
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <div>
-          <h2 className="eyebrow text-muted">Social</h2>
-          <ul className="mt-5 space-y-3">
-            {socials.map((s) => (
-              <li key={s.label}>
-                {s.href ? (
-                  <a href={s.href} target="_blank" rel="noopener noreferrer" className="text-ink/90 transition-colors hover:text-cyan">
-                    {s.label}
-                  </a>
-                ) : (
-                  <span className="text-ink/60">
-                    {s.label} <span className="placeholder text-[0.65rem]">[URL — TO BE PROVIDED]</span>
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      <div className="container-x flex flex-col gap-3 border-t border-line/50 py-6 text-xs text-faint sm:flex-row sm:items-center sm:justify-between">
-        <p>© 2026 WOLVO. All rights reserved.</p>
-        <a href="#top" className="uppercase tracking-[0.2em] transition-colors hover:text-ink">
-          Back to top ↑
-        </a>
       </div>
     </footer>
   );

@@ -1,0 +1,560 @@
+/* ==========================================================================
+   Hero — stacked by default (mobile / tablet / portrait), full-bleed
+   cinematic composition on wide desktop viewports.
+
+   The hero is a `.theme-dark` scope: the brand photo is a night scene, so the
+   stage stays dark in both themes. In day mode it becomes a framed panel on
+   the light page (see the end of this file).
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-top: calc(var(--nav-height) + clamp(40px, 8vw, 72px));
+  padding-bottom: clamp(56px, 8vw, 96px);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--color-bg);
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero__glow {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.hero__glow--a {
+  right: -60vw;
+  top: -55vw;
+  width: 130vw;
+  height: 130vw;
+  background: radial-gradient(closest-side, rgba(0, 102, 255, 0.16), rgba(0, 210, 255, 0.05) 55%, transparent 75%);
+}
+
+.hero__glow--b {
+  left: -45vw;
+  top: 30%;
+  width: 90vw;
+  height: 90vw;
+  background: radial-gradient(closest-side, rgba(0, 210, 255, 0.08), transparent 70%);
+}
+
+.hero__grid {
+  mask-image: radial-gradient(70% 55% at 18% 32%, #000, transparent 78%);
+  -webkit-mask-image: radial-gradient(70% 55% at 18% 32%, #000, transparent 78%);
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero__copy {
+  max-width: 680px;
+}
+
+.hero__eyebrow {
+  margin-bottom: var(--space-6);
+}
+
+.hero__title {
+  font-size: var(--fs-display);
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: var(--tracking-display);
+  text-wrap: initial;
+}
+
+.hero__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.hero__line-inner {
+  display: inline-block;
+}
+
+.hero__desc {
+  max-width: 34rem;
+  margin-top: var(--space-8);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-10);
+}
+
+.hero__trust {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-5);
+  margin-top: var(--space-10);
+}
+
+.hero__services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--color-text-subtle);
+}
+
+/* Every item carries its own bullet, so wrapped lines never start with a stray dot. */
+.hero__services li::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin-right: 8px;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+/* --- Visual (stacked) -------------------------------------------------- */
+
+.hero__media {
+  position: relative;
+  z-index: 1;
+  margin-top: clamp(48px, 8vw, 72px);
+  padding-inline: var(--gutter);
+}
+
+.hero__stage {
+  position: relative;
+  max-width: var(--container-width);
+  margin-inline: auto;
+}
+
+.hero__image {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.hero__image picture,
+.hero__image img {
+  width: 100%;
+  height: 100%;
+}
+
+.hero__image img {
+  object-fit: cover;
+  object-position: 80% 50%;
+}
+
+.hero__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgb(var(--bg-rgb) / 0.55), transparent 45%);
+}
+
+/* --- Floating badges --------------------------------------------------- */
+
+.hero-badge {
+  position: absolute;
+  z-index: 2;
+  display: none;
+}
+
+/* Solid glass, no backdrop-filter: re-blurring the photo under a moving layer
+   every frame is what made these badges shimmer/flicker. Over the dark photo a
+   near-opaque fill reads the same. */
+.hero-badge__inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px 10px 10px;
+  border-radius: 14px;
+  white-space: nowrap;
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.92), rgba(9, 13, 22, 0.94));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 18px 40px -16px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backface-visibility: hidden;
+}
+
+/* Ambient float — animates the independent `translate` property on the
+   compositor, so it never fights GSAP's `transform` (entrance/parallax). */
+.hero.is-floating .hero-badge__inner {
+  animation: hero-float var(--float-duration, 6.4s) var(--ease-in-out) infinite alternate;
+}
+
+.hero.is-idle .hero-badge__inner {
+  animation-play-state: paused;
+}
+
+.hero-badge--web {
+  --float-duration: 6.4s;
+  --float-y: -8px;
+}
+
+.hero-badge--ads {
+  --float-duration: 7.6s;
+  --float-y: 8px;
+}
+
+.hero-badge--video {
+  --float-duration: 8.8s;
+  --float-y: -7px;
+}
+
+@keyframes hero-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 var(--float-y, -8px);
+  }
+}
+
+.hero-badge__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  color: #d6ecff;
+  background: linear-gradient(135deg, rgba(0, 102, 255, 0.35), rgba(0, 210, 255, 0.2));
+  border: 1px solid rgba(0, 210, 255, 0.3);
+}
+
+.hero-badge__icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.hero-badge__text {
+  display: grid;
+  gap: 4px;
+  line-height: 1.2;
+}
+
+.hero-badge__text strong {
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.hero-badge__text > span {
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+}
+
+.hero-badge__spark {
+  width: 80px;
+  height: 16px;
+  color: var(--color-primary-hover);
+}
+
+.hero-badge__timeline {
+  display: flex;
+  gap: 3px;
+}
+
+.hero-badge__timeline i {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-primary);
+}
+
+.hero-badge__timeline i:nth-child(1) {
+  width: 24px;
+}
+
+.hero-badge__timeline i:nth-child(2) {
+  width: 34px;
+  background: var(--color-secondary);
+}
+
+.hero-badge__timeline i:nth-child(3) {
+  width: 16px;
+  background: var(--color-primary-hover);
+}
+
+@media (min-width: 640px) {
+  .hero-badge--web,
+  .hero-badge--ads {
+    display: block;
+  }
+
+  .hero-badge--web {
+    left: 4%;
+    top: 7%;
+  }
+
+  .hero-badge--ads {
+    right: 4%;
+    top: 12%;
+  }
+}
+
+/* --- Scroll cue -------------------------------------------------------- */
+
+.hero__scroll {
+  display: none;
+}
+
+.hero__scroll-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+  transition: color var(--dur-micro) var(--ease-out);
+}
+
+.hero__scroll-link:hover {
+  color: var(--color-text);
+}
+
+.hero__scroll-line {
+  position: relative;
+  width: 1px;
+  height: 38px;
+  overflow: hidden;
+  background: rgb(var(--ink) / 0.14);
+}
+
+.hero__scroll-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 40%;
+  background: var(--color-primary-hover);
+  animation: hero-scroll-cue 2.2s var(--ease-in-out) infinite;
+}
+
+@keyframes hero-scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(260%);
+  }
+}
+
+/* --- Full-bleed desktop composition ------------------------------------ */
+
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .hero {
+    min-height: max(700px, 100svh);
+    justify-content: center;
+    padding-top: calc(var(--nav-height) + 32px);
+    padding-bottom: 112px;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 1;
+    height: 160px;
+    pointer-events: none;
+    background: linear-gradient(0deg, var(--color-bg), transparent);
+  }
+
+  .hero__copy {
+    max-width: min(660px, 54vw);
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hero__stage {
+    flex: none;
+    width: 104%;
+    max-width: none;
+    margin-left: -2%;
+  }
+
+  .hero__image {
+    aspect-ratio: 1672 / 941;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .hero__image img {
+    object-position: center;
+  }
+
+  .hero__shade {
+    background:
+      linear-gradient(90deg, var(--color-bg) 0%, rgb(var(--bg-rgb) / 0.92) 24%, rgb(var(--bg-rgb) / 0.5) 45%, rgb(var(--bg-rgb) / 0) 60%),
+      linear-gradient(180deg, var(--color-bg) 0%, rgb(var(--bg-rgb) / 0) 18%, rgb(var(--bg-rgb) / 0) 76%, var(--color-bg) 100%);
+  }
+
+  /* Plain alpha instead of mix-blend-mode: a full-screen blend layer above the
+     photo forced the whole stage to re-composite on every parallax frame. */
+  .hero__glow--a {
+    right: -10vw;
+    top: -20vw;
+    width: 70vw;
+    height: 70vw;
+    z-index: 1;
+    background: radial-gradient(closest-side, rgba(0, 120, 255, 0.12), rgba(0, 210, 255, 0.04) 55%, transparent 75%);
+  }
+
+  .hero__bg {
+    z-index: 1;
+  }
+
+  .hero__grid {
+    mask-image: radial-gradient(45% 60% at 18% 45%, #000, transparent 80%);
+    -webkit-mask-image: radial-gradient(45% 60% at 18% 45%, #000, transparent 80%);
+  }
+
+  .hero-badge {
+    display: block;
+  }
+
+  .hero-badge--web {
+    left: 57%;
+    top: 23%;
+  }
+
+  .hero-badge--ads {
+    left: auto;
+    right: 5%;
+    top: 21%;
+  }
+
+  .hero-badge--video {
+    left: 60%;
+    top: 70%;
+  }
+
+  .hero__scroll {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 28px;
+    z-index: 2;
+  }
+}
+
+/* Short laptop screens (e.g. 1280×720): keep the whole first screen above the fold. */
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (max-height: 820px) {
+  .hero {
+    padding-top: calc(var(--nav-height) + 16px);
+    padding-bottom: 88px;
+  }
+
+  .hero__eyebrow {
+    margin-bottom: var(--space-4);
+  }
+
+  .hero__title {
+    font-size: min(var(--fs-display), 9.6svh);
+  }
+
+  .hero__desc {
+    margin-top: var(--space-5);
+  }
+
+  .hero__actions {
+    margin-top: var(--space-8);
+  }
+
+  .hero__trust {
+    margin-top: var(--space-6);
+  }
+
+  .hero__scroll {
+    bottom: 16px;
+  }
+}
+
+/* Parallax layers get their own compositor layer only where they move. */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hero [data-depth] {
+    will-change: transform;
+  }
+}
+
+/* --- Phones: text-only hero --------------------------------------------- */
+
+/* Hides the visual stage (photo + floating badges) and the scroll cue on phones —
+   portrait under 768px, and landscape touch screens no taller than 500px. The
+   image itself is skipped via <source media> (Hero.tsx), so it is never fetched.
+   Heading, copy, CTAs and the trust row are untouched. */
+@media (max-width: 767px), (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+  .hero__media,
+  .hero__scroll {
+    display: none;
+  }
+
+  .hero {
+    padding-bottom: clamp(48px, 12vw, 72px);
+  }
+}
+
+/* --- Day mode: the dark stage becomes a framed panel ------------------- */
+
+[data-theme='light'] .hero {
+  margin: var(--nav-height) var(--panel-inset) 0;
+  padding-top: clamp(40px, 8vw, 72px);
+  border-radius: clamp(20px, 2.4vw, 32px);
+  box-shadow: 0 40px 80px -48px rgba(5, 10, 24, 0.55);
+}
+
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  [data-theme='light'] .hero {
+    min-height: max(640px, calc(100svh - var(--nav-height) - var(--panel-inset)));
+    padding-top: 40px;
+  }
+}
+
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) and (max-height: 820px) {
+  [data-theme='light'] .hero {
+    padding-top: 24px;
+  }
+}
+
+@media (max-width: 639px) {
+  .hero__action {
+    flex: 1 1 100%;
+  }
+
+  .hero__action > .btn,
+  .hero__action > .magnetic,
+  .hero__action > .magnetic > .btn {
+    width: 100%;
+  }
+}

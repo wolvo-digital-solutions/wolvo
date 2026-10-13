@@ -1,0 +1,485 @@
+.services {
+  overflow: clip;
+}
+
+.services__glow {
+  position: absolute;
+  left: 50%;
+  top: 8%;
+  width: min(1200px, 120vw);
+  height: 700px;
+  translate: -50% 0;
+  background: radial-gradient(closest-side, var(--ambient-blue), transparent 70%);
+  pointer-events: none;
+}
+
+.services__grid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Bento: web + app, three equal cards, then a full-width feature card (social). */
+@media (min-width: 640px) {
+  .services__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .service-card--web,
+  .service-card--social {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .services__grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .service-card--web {
+    grid-column: span 7;
+  }
+
+  .service-card--app {
+    grid-column: span 5;
+  }
+
+  .service-card--ads,
+  .service-card--video,
+  .service-card--brand {
+    grid-column: span 4;
+  }
+
+  .service-card--social {
+    grid-column: span 12;
+  }
+}
+
+/* --- Card -------------------------------------------------------------- */
+
+.service-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 2.4vw, 32px);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.4s var(--ease-out),
+    border-color 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out);
+}
+
+.service-card__glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(420px circle at var(--mx, 70%) var(--my, 0%), color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 62%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+}
+
+.service-card:hover,
+.service-card:focus-within {
+  border-color: var(--color-border-highlight);
+  box-shadow: var(--shadow-glow);
+}
+
+@media (hover: hover) {
+  .service-card:hover {
+    transform: translateY(-6px);
+  }
+
+  .service-card:hover .service-card__glow {
+    opacity: 1;
+  }
+}
+
+.service-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.service-card__index {
+  font-size: clamp(2.5rem, 2.4vw + 1.2rem, 3.5rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: transparent;
+  -webkit-text-stroke: 1px rgb(var(--ink) / 0.24);
+  transition: -webkit-text-stroke-color 0.4s var(--ease-out);
+}
+
+.service-card:hover .service-card__index {
+  -webkit-text-stroke-color: color-mix(in srgb, var(--color-primary-hover) 70%, transparent);
+}
+
+.service-card__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface-elevated);
+  color: var(--color-text-secondary);
+  transition:
+    transform 0.4s var(--ease-out),
+    color 0.4s var(--ease-out),
+    border-color 0.4s var(--ease-out);
+}
+
+.service-card__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.service-card:hover .service-card__icon {
+  color: var(--color-primary-hover);
+  border-color: var(--color-border-highlight);
+  transform: scale(1.08) rotate(-4deg);
+}
+
+/* --- Artwork ----------------------------------------------------------- */
+
+/* Rendered scenes are composed for 16:10 with the subject centred, so frames can
+   crop anywhere between ~1.45:1 and ~2.2:1. Ratios below keep each row level:
+   web (7 cols, 2.2:1) ≈ app (5 cols, 1.6:1) in height. */
+.service-card__visual {
+  position: relative;
+  aspect-ratio: 1.6;
+  margin: clamp(20px, 2.4vw, 28px) 0;
+  border-radius: 14px;
+  border: 1px solid rgba(120, 175, 255, 0.16);
+  background: #050b1c;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Inner edge light that keeps the frame crisp against the artwork. */
+.service-card__visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), inset 0 -40px 60px -40px rgba(4, 8, 20, 0.6);
+}
+
+/* Taller than the frame so the scroll parallax never reveals an edge. */
+.service-card__media {
+  position: absolute;
+  inset: -6% 0;
+  will-change: transform;
+}
+
+.service-card__media picture,
+.service-card__media img {
+  width: 100%;
+  height: 100%;
+}
+
+.service-card__media img {
+  object-fit: cover;
+  object-position: 50% 50%;
+  transition: transform 0.9s var(--ease-out);
+}
+
+@media (hover: hover) {
+  .service-card:hover .service-card__media img {
+    transform: scale(1.045);
+  }
+}
+
+[data-theme='light'] .service-card__visual {
+  border-color: transparent;
+  box-shadow: 0 18px 36px -24px rgba(5, 10, 24, 0.55);
+}
+
+@media (min-width: 640px) {
+  .service-card__visual {
+    aspect-ratio: 1.45;
+  }
+
+  .service-card--web .service-card__visual,
+  .service-card--social .service-card__visual {
+    aspect-ratio: 2.2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .service-card--app .service-card__visual {
+    aspect-ratio: 1.6;
+  }
+
+  /* Feature card: copy on the left, artwork on the right. */
+  .service-card--social {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-rows: auto 1fr auto;
+    column-gap: clamp(28px, 3.4vw, 56px);
+  }
+
+  .service-card--social .service-card__top {
+    grid-area: 1 / 1;
+  }
+
+  .service-card--social .service-card__body {
+    grid-area: 2 / 1;
+    align-self: center;
+    padding-block: var(--space-6);
+  }
+
+  .service-card--social .service-card__cta {
+    grid-area: 3 / 1;
+  }
+
+  .service-card--social .service-card__visual {
+    grid-area: 1 / 2 / 4 / 3;
+    aspect-ratio: auto;
+    min-height: 360px;
+    margin: 0;
+  }
+}
+
+.service-card__body {
+  flex: 1;
+}
+
+.service-card__title {
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-h3);
+  font-weight: 650;
+}
+
+.service-card__desc {
+  max-width: 48ch;
+  font-size: 0.9688rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.service-card__tags {
+  margin-top: var(--space-5);
+}
+
+.service-card__cta {
+  position: relative;
+  align-self: flex-start;
+  margin-top: var(--space-5);
+}
+
+.service-card__cta::after {
+  /* Generous hit area without changing layout. */
+  content: '';
+  position: absolute;
+  inset: -6px -10px;
+}
+
+/* --- Process ----------------------------------------------------------- */
+
+.process {
+  margin-top: clamp(88px, 10vw, 140px);
+}
+
+.process__head {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+
+@media (min-width: 1024px) {
+  .process__head {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: end;
+    column-gap: var(--space-16);
+  }
+}
+
+.process__title {
+  font-size: var(--fs-h2);
+  letter-spacing: var(--tracking-heading);
+}
+
+.process__desc {
+  max-width: 42ch;
+  color: var(--color-text-secondary);
+}
+
+.process__track {
+  position: relative;
+}
+
+.process__line {
+  position: absolute;
+  left: 40px;
+  top: 40px;
+  bottom: 40px;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.process__line-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--color-primary), var(--color-secondary));
+  transform-origin: top center;
+}
+
+.process__steps {
+  display: grid;
+  gap: var(--space-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.process__step {
+  position: relative;
+  padding-left: 108px;
+  min-height: 80px;
+}
+
+/* Glass tile with a gradient-stroked line icon. */
+.process__node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  border: 1px solid var(--color-border-highlight);
+  background:
+    radial-gradient(90% 90% at 30% 15%, color-mix(in srgb, var(--color-primary) 24%, transparent), transparent 65%),
+    linear-gradient(160deg, rgb(var(--ink) / 0.06), transparent 55%),
+    var(--color-surface-elevated);
+  box-shadow:
+    0 0 0 8px var(--color-bg),
+    0 16px 36px -18px color-mix(in srgb, var(--color-primary) 65%, transparent),
+    inset 0 1px 0 rgb(var(--ink) / 0.1);
+  transition:
+    border-color 0.5s var(--ease-out),
+    box-shadow 0.5s var(--ease-out),
+    transform 0.5s var(--ease-out);
+}
+
+/* Stops for the shared icon gradient (defined on the section, where the <defs> live). */
+.process {
+  --process-icon-from: #3b9dff;
+  --process-icon-to: #22d3ff;
+}
+
+[data-theme='light'] .process {
+  --process-icon-from: #0058e6;
+  --process-icon-to: #0093cc;
+}
+
+.process__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.process__icon {
+  width: 36px;
+  height: 36px;
+  transition:
+    transform 0.5s var(--ease-spring),
+    opacity 0.5s var(--ease-out),
+    filter 0.5s var(--ease-out);
+  filter: drop-shadow(0 4px 10px color-mix(in srgb, var(--color-cyan) 35%, transparent));
+}
+
+@media (hover: hover) {
+  .process__step:hover .process__node {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--color-cyan) 70%, transparent);
+    box-shadow:
+      0 0 0 8px var(--color-bg),
+      0 22px 44px -16px color-mix(in srgb, var(--color-cyan) 55%, transparent),
+      inset 0 1px 0 rgb(var(--ink) / 0.12);
+  }
+
+  .process__step:hover .process__icon {
+    transform: scale(1.08) rotate(-4deg);
+  }
+}
+
+.process__num {
+  display: block;
+  margin-bottom: 8px;
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-primary-hover);
+  transition: color 0.45s var(--ease-out);
+}
+
+.process__step-title {
+  margin-bottom: 8px;
+  font-size: var(--fs-h3);
+  font-weight: 650;
+}
+
+.process__step-desc {
+  max-width: 32ch;
+  font-size: var(--fs-small);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+/* Inactive state only applies while the scroll animation is running: the icon is
+   dimmed until the progress line reaches its step, then "powers on". */
+.process__track.is-animated .process__step:not(.is-active) .process__node {
+  border-color: var(--color-border-strong);
+  box-shadow: 0 0 0 8px var(--color-bg);
+}
+
+.process__track.is-animated .process__step:not(.is-active) .process__icon {
+  opacity: 0.4;
+  filter: grayscale(1);
+  transform: scale(0.9);
+}
+
+.process__track.is-animated .process__step:not(.is-active) .process__num {
+  color: var(--color-text-subtle);
+}
+
+@media (min-width: 1024px) {
+  .process__line {
+    left: 40px;
+    right: calc((100% - 3 * var(--space-8)) / 4 - 40px);
+    top: 40px;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+  }
+
+  .process__line-fill {
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    transform-origin: left center;
+  }
+
+  .process__steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
+
+  .process__step {
+    padding-left: 0;
+    padding-top: 112px;
+  }
+}

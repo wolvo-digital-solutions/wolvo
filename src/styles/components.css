@@ -1,0 +1,431 @@
+/* ==========================================================================
+   Shared UI components
+   ========================================================================== */
+
+/* --- Buttons ----------------------------------------------------------- */
+
+.btn {
+  --btn-h: 52px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--btn-h);
+  padding: 0 24px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  white-space: nowrap;
+  isolation: isolate;
+  transition:
+    transform var(--dur-hover) var(--ease-out),
+    box-shadow var(--dur-hover) var(--ease-out),
+    border-color var(--dur-hover) var(--ease-out),
+    background-color var(--dur-hover) var(--ease-out),
+    color var(--dur-hover) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn__icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  transition: transform var(--dur-hover) var(--ease-out);
+}
+
+.btn:hover .btn__icon--arrow-right {
+  transform: translateX(4px);
+}
+
+.btn:hover .btn__icon--arrow-up-right {
+  transform: translate(2px, -2px);
+}
+
+.btn:hover .btn__icon--arrow-down {
+  transform: translateY(3px);
+}
+
+.btn--primary {
+  color: var(--color-on-accent);
+  background: var(--gradient-primary);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 8px 24px -14px rgba(0, 98, 240, 0.8);
+}
+
+.btn--primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--gradient-primary-hover);
+  opacity: 0;
+  transition: opacity var(--dur-hover) var(--ease-out);
+}
+
+.btn--primary:hover {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset, var(--shadow-cta);
+}
+
+.btn--primary:hover::before {
+  opacity: 1;
+}
+
+.btn--secondary {
+  color: var(--color-text);
+  background: var(--surface-control);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-card);
+}
+
+.btn--secondary:hover {
+  border-color: var(--color-border-highlight);
+  background: var(--surface-control-hover);
+}
+
+.btn--ghost {
+  color: var(--color-text-secondary);
+  padding-inline: 4px;
+  min-height: 44px;
+}
+
+.btn--ghost:hover {
+  color: var(--color-text);
+}
+
+@media (hover: hover) {
+  .btn--primary:hover,
+  .btn--secondary:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.btn--sm {
+  --btn-h: 44px;
+  padding: 0 18px;
+  font-size: 0.875rem;
+  border-radius: 11px;
+}
+
+.btn--lg {
+  --btn-h: 60px;
+  padding: 0 32px;
+  font-size: 1rem;
+  border-radius: 14px;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Magnetic wrapper keeps GSAP transforms separate from CSS hover lift. */
+.magnetic {
+  display: inline-flex;
+}
+
+/* --- Arrow text link --------------------------------------------------- */
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--color-text);
+  transition: color var(--dur-hover) var(--ease-out);
+}
+
+.link-arrow svg {
+  width: 17px;
+  height: 17px;
+  color: var(--color-primary-hover);
+  transition: transform var(--dur-hover) var(--ease-out);
+}
+
+.link-arrow:hover {
+  color: var(--color-primary-hover);
+}
+
+.link-arrow:hover svg {
+  transform: translateX(4px);
+}
+
+/* --- Badges & tags ----------------------------------------------------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.badge--accent {
+  color: var(--color-primary-hover);
+  border-color: color-mix(in srgb, var(--color-primary) 28%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+/* Sits on imagery/mockups, which are dark in both themes. */
+.badge--glass {
+  background: rgba(7, 9, 14, 0.72);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* --- Status pill ------------------------------------------------------- */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--color-success) 28%, transparent);
+  background: color-mix(in srgb, var(--color-success) 9%, transparent);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--color-success-text);
+}
+
+.status__dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+}
+
+.status__dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--color-success);
+  opacity: 0;
+  animation: status-pulse 2.4s var(--ease-out) infinite;
+}
+
+@keyframes status-pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* --- Section heading --------------------------------------------------- */
+
+.section-heading {
+  display: grid;
+  gap: var(--space-6);
+  margin-bottom: clamp(48px, 6vw, 80px);
+}
+
+.section-heading__title {
+  margin-top: 20px;
+  font-size: var(--fs-h1);
+  font-weight: 650;
+  letter-spacing: var(--tracking-display);
+  line-height: 1.02;
+  max-width: 16ch;
+}
+
+.section-heading__aside {
+  display: grid;
+  gap: var(--space-6);
+  align-content: end;
+  justify-items: start;
+}
+
+.section-heading__desc {
+  max-width: 46ch;
+}
+
+@media (min-width: 1024px) {
+  .section-heading--split {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: end;
+    column-gap: var(--space-16);
+  }
+}
+
+/* --- Icon button & carousel controls ----------------------------------- */
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  background: var(--surface-control);
+  color: var(--color-text);
+  transition:
+    border-color var(--dur-hover) var(--ease-out),
+    background-color var(--dur-hover) var(--ease-out),
+    color var(--dur-hover) var(--ease-out),
+    opacity var(--dur-hover) var(--ease-out);
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-btn:hover:not(:disabled) {
+  border-color: var(--color-border-highlight);
+  color: var(--color-primary-hover);
+}
+
+.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.carousel-controls__progress {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  min-width: 80px;
+  border-radius: 2px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+.carousel-controls__bar {
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-primary);
+  transform-origin: left center;
+}
+
+.carousel-controls__count {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+  min-width: 52px;
+}
+
+.carousel-controls__count span {
+  color: var(--color-text);
+}
+
+/* --- Social icons ------------------------------------------------------ */
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.socials a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  transition:
+    color var(--dur-hover) var(--ease-out),
+    border-color var(--dur-hover) var(--ease-out),
+    transform var(--dur-hover) var(--ease-out);
+}
+
+.socials a:hover {
+  color: var(--color-primary-hover);
+  border-color: var(--color-border-highlight);
+  transform: translateY(-3px);
+}
+
+.socials svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* --- Logo ------------------------------------------------------------- */
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.3125rem;
+  letter-spacing: -0.04em;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+/* Official Wolvo mark (raster, transparent). The box keeps its aspect ratio so
+   nothing shifts while it loads. */
+.logo__mark {
+  display: block;
+  flex: none;
+  width: auto;
+  height: 34px;
+  aspect-ratio: 218 / 160;
+  object-fit: contain;
+  transition: transform var(--dur-hover) var(--ease-out);
+}
+
+.logo__mark img {
+  width: 100%;
+  height: 100%;
+}
+
+.logo:hover .logo__mark {
+  transform: translateY(-1px) scale(1.04);
+}
+
+@media (max-width: 767px) {
+  .logo__mark {
+    height: 30px;
+  }
+}

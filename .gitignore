@@ -1,39 +1,18 @@
-<<<<<<< HEAD
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
 node_modules
 dist
 dist-ssr
 *.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-=======
-node_modules/
-.next/
-out/
-*.tsbuildinfo
-next-env.d.ts
 .env
-.env*.local
+.env.*
+!.env.example
 .DS_Store
-# Source archives are large; keep them out of git. Derived WebP frames in public/ are committed.
-source-assets/*.zip
-source-assets/.frames/
-.claude/settings.local.json
->>>>>>> 8919ebd58bbbb7599e6902b6a9ee35cedc0e995a
+*.log
+.vite
+coverage
+
+# Intermediate renders (regenerate with npm run render)
+assets/renders/out
+
+# IDE and tooling
+.claude
+

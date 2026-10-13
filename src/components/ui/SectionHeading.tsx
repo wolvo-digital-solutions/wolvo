@@ -1,37 +1,34 @@
-import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import type { ReactNode } from 'react';
 
-export function SectionHeading({
-  index,
-  eyebrow,
-  title,
-  intro,
-  id,
-  className,
-  align = "left",
-}: {
-  index?: string;
+interface SectionHeadingProps {
+  id: string;
+  index: string;
   eyebrow: string;
   title: ReactNode;
-  intro?: ReactNode;
-  id?: string;
-  className?: string;
-  align?: "left" | "center";
-}) {
+  description?: ReactNode;
+  actions?: ReactNode;
+  layout?: 'split' | 'stacked';
+}
+
+/** Eyebrow + large heading + supporting copy, shared by every section. */
+export function SectionHeading({ id, index, eyebrow, title, description, actions, layout = 'split' }: SectionHeadingProps) {
   return (
-    <header className={cn("max-w-4xl", align === "center" && "mx-auto text-center", className)}>
-      <p className={cn("eyebrow flex items-center gap-3", align === "center" && "justify-center")} data-reveal>
-        {index && <span className="text-muted">{index}</span>}
-        <span aria-hidden className="h-px w-8 bg-sky/60" />
-        {eyebrow}
-      </p>
-      <h2 id={id} className="mt-6 text-h2 uppercase" data-reveal>
-        {title}
-      </h2>
-      {intro && (
-        <p className={cn("mt-6 max-w-2xl text-lg text-muted", align === "center" && "mx-auto")} data-reveal>
-          {intro}
+    <header className={`section-heading section-heading--${layout}`}>
+      <div className="section-heading__main">
+        <p className="eyebrow" data-reveal="fade">
+          <span className="eyebrow__index">{index}</span>
+          <span className="eyebrow__line" aria-hidden="true" />
+          {eyebrow}
         </p>
+        <h2 id={id} className="section-heading__title" data-reveal="lines">
+          {title}
+        </h2>
+      </div>
+      {(description || actions) && (
+        <div className="section-heading__aside" data-reveal="up" data-reveal-delay="0.15">
+          {description && <p className="section-heading__desc lead">{description}</p>}
+          {actions}
+        </div>
       )}
     </header>
   );

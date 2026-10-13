@@ -1,241 +1,212 @@
-"use client";
+import { useRef } from 'react';
+import { Clapperboard, Code2, TrendingUp } from 'lucide-react';
+import { gsap, ScrollTrigger } from '@/animations/gsap';
+import { useSectionMotion } from '@/hooks/useSectionMotion';
+import { useUI } from '@/context/UIContext';
+import { images } from '@/data/images';
+import { services } from '@/data/services';
+import { Button } from '@/components/ui/Button';
+import { Picture } from '@/components/ui/Picture';
+import { StatusPill } from '@/components/ui/StatusPill';
+import './Hero.css';
 
-import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { FrameSequence, heroSets } from "@/lib/frameSequence";
-import { heroLoading } from "@/lib/loading";
-import { useExperience } from "@/components/motion/ExperienceProvider";
-import { ButtonLink } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
-
-// Story beats mapped onto the supplied sequence (docs/ANIMATION_SPEC.md hero timeline).
-const chapters = [
-  { at: 0, label: "The wolf" },
-  { at: 0.25, label: "Energy" },
-  { at: 0.5, label: "Decomposition" },
-  { at: 0.72, label: "Formation" },
-  { at: 0.9, label: "WOLVO" },
-];
-
-/** Portion of the pinned scroll spent on frames; the rest holds the final W for readability. */
-const FRAMES_END = 0.9;
+/**
+ * Phones (portrait, and landscape: touch screens no taller than 500px) get a
+ * text-only hero: the visual stage is hidden by Hero.css and its image is not
+ * downloaded. Keep in sync with Hero.css and the preload `media` in index.html.
+ */
+const HERO_VISUAL_HIDDEN = '(max-width: 767px), (pointer: coarse) and (max-height: 500px) and (orientation: landscape)';
 
 export function Hero() {
-  const { ready, reducedMotion, tier } = useExperience();
-  const root = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const seqRef = useRef<FrameSequence | null>(null);
-  const progressRef = useRef(0);
-  const zoomRef = useRef(0);
+  const ref = useRef<HTMLElement>(null);
+  const { openContact } = useUI();
 
-  const animated = ready && !reducedMotion;
+  useSectionMotion(
+    ref,
+    ({ scope, isDesktop, isFinePointer }) => {
+      if (!isDesktop) return;
+      const q = gsap.utils.selector(scope);
 
-  // ---- Frame sequence lifecycle -------------------------------------------------
-  useEffect(() => {
-    if (!ready) return;
-    if (!animated) {
-      heroLoading.set(1); // static poster only
-      return;
-    }
-    const canvas = canvasRef.current!;
-    const useSmall = tier === "low" || window.innerWidth * Math.min(devicePixelRatio, 2) < 1300;
-    const seq = new FrameSequence(
-      useSmall ? heroSets.sm : heroSets.lg,
-      (first) => heroLoading.set(first),
-      () => seq.draw(progressRef.current, true),
-    );
-    seqRef.current = seq;
+      // Scroll exit: copy rises and fades faster than the visual (depth).
+      const exit = { trigger: scope, start: 'top top', end: 'bottom top', scrub: true };
+      gsap.to(q('[data-hero-copy]'), { y: -110, opacity: 0, ease: 'none', scrollTrigger: exit });
+      gsap.to(q('[data-hero-media]'), { y: 90, ease: 'none', scrollTrigger: exit });
 
-    const resize = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 1.75);
-      const { clientWidth: w, clientHeight: h } = canvas;
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
-      seq.attach(canvas);
-      seq.zoomOut = zoomRef.current;
-      seq.draw(progressRef.current, true);
-    };
-    resize();
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-    seq.load(useSmall ? 4 : 6);
+      if (!isFinePointer) return;
 
-    return () => {
-      ro.disconnect();
-      seq.dispose();
-      seqRef.current = null;
-    };
-  }, [ready, animated, tier]);
-
-  // ---- Scroll choreography: one scrubbed timeline for the whole hero -----------
-  useGSAP(
-    () => {
-      if (!animated) return;
-      const q = gsap.utils.selector(root);
-      const state = { frame: 0 };
-      const tl = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: root.current,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.6,
-          onUpdate: (self) => {
-            const label = [...chapters].reverse().find((c) => self.progress >= c.at * FRAMES_END + 0.001) ?? chapters[0];
-            const el = q("[data-chapter]")[0];
-            if (el && el.textContent !== label.label) el.textContent = label.label;
-          },
-        },
-      });
-
-      tl.to(state, {
-        frame: 1,
-        duration: FRAMES_END,
-        onUpdate: () => {
-          const canvas = canvasRef.current!;
-          const portrait = canvas.clientWidth / canvas.clientHeight < 1;
-          progressRef.current = state.frame;
-          zoomRef.current = portrait ? gsap.utils.clamp(0, 1, (state.frame - 0.72) / 0.22) : 0;
-          const seq = seqRef.current;
-          if (!seq) return;
-          seq.zoomOut = zoomRef.current;
-          seq.draw(state.frame);
-        },
-      }, 0)
-        // Intro copy steps aside as the wolf activates.
-        .to(q("[data-hero-intro]"), { autoAlpha: 0, y: -40, duration: 0.12, ease: "power1.in" }, 0.02)
-        .to(q("[data-hero-scrim]"), { opacity: 0.25, duration: 0.15 }, 0.04)
-        .to(q("[data-scroll-cue]"), { autoAlpha: 0, duration: 0.05 }, 0)
-        .fromTo(q("[data-hero-meter]"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05 }, 0.06)
-        .fromTo(q("[data-hero-meter-bar]"), { scaleY: 0 }, { scaleY: 1, duration: FRAMES_END - 0.06 }, 0.06)
-        // Light vignette deepens during decomposition, lifts for the final mark.
-        .to(q("[data-hero-vignette]"), { opacity: 0.85, duration: 0.3 }, 0.35)
-        .to(q("[data-hero-vignette]"), { opacity: 0.4, duration: 0.2 }, 0.72)
-        // Brand lockup resolves once the W is formed, then holds.
-        .fromTo(
-          q("[data-hero-lockup] > *"),
-          { autoAlpha: 0, y: 24, filter: "blur(6px)" },
-          { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.07, stagger: 0.02, ease: "power2.out" },
-          FRAMES_END - 0.04,
-        )
-        .to(q("[data-hero-meter]"), { autoAlpha: 0, duration: 0.04 }, FRAMES_END)
-        .to({}, { duration: 1 - FRAMES_END - 0.02 });
-
-      // Intro entrance on load (not scroll-bound).
-      gsap.from(q("[data-hero-intro] > *"), { autoAlpha: 0, y: 30, duration: 1.4, stagger: 0.1, ease: "expo.out", delay: 0.5 });
+      // Mouse parallax on foreground layers (desktop pointer only), via quickTo.
+      const layers = q('[data-depth]').map((el) => ({
+        depth: Number(el.dataset.depth),
+        x: gsap.quickTo(el, 'x', { duration: 1.1, ease: 'power3.out' }),
+        y: gsap.quickTo(el, 'y', { duration: 1.1, ease: 'power3.out' }),
+      }));
+      const onMove = (e: PointerEvent) => {
+        if (e.pointerType !== 'mouse') return;
+        const nx = e.clientX / window.innerWidth - 0.5;
+        const ny = e.clientY / window.innerHeight - 0.5;
+        layers.forEach((l) => {
+          l.x(nx * l.depth * -36);
+          l.y(ny * l.depth * -24);
+        });
+      };
+      scope.addEventListener('pointermove', onMove);
+      return () => {
+        scope.removeEventListener('pointermove', onMove);
+        gsap.set(q('[data-depth]'), { clearProps: 'transform' });
+      };
     },
-    { scope: root, dependencies: [animated], revertOnUpdate: true },
+    {
+      reveals: false,
+      // Entrance plays once per page view: eyebrow → headline lines → copy → CTAs → trust row,
+      // with the visual scaling in alongside. Never restarted by resizes or re-renders.
+      intro: (scope) => {
+        const q = gsap.utils.selector(scope);
+        // Starts paused and plays on the frame after first paint, so it always runs from its
+        // first frame (the ticker uses lagSmoothing(0), so a busy main thread would skip ahead).
+        const tl = gsap.timeline({ paused: true, delay: 0.15, defaults: { ease: 'power4.out' } });
+        tl
+          .from(q('.hero__eyebrow'), { y: 16, opacity: 0, duration: 0.8 })
+          .from(q('.hero__line-inner'), { yPercent: 115, duration: 1.25, stagger: 0.12 }, '-=0.55')
+          .from(q('.hero__desc'), { y: 24, opacity: 0, duration: 0.9, ease: 'power3.out' }, '-=0.85')
+          .from(q('.hero__action'), { y: 20, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out' }, '-=0.7')
+          .from(q('.hero__trust > *'), { y: 14, opacity: 0, duration: 0.7, stagger: 0.08, ease: 'power3.out' }, '-=0.6')
+          .from(q('[data-hero-stage]'), { scale: 0.96, opacity: 0, duration: 1.4, ease: 'power3.out', clearProps: 'transform' }, 0.05)
+          .from(q('.hero-badge__inner'), { y: 26, opacity: 0, scale: 0.92, duration: 0.9, stagger: 0.14, ease: 'back.out(1.6)', clearProps: 'transform' }, 1)
+          .from(q('.hero__scroll'), { opacity: 0, duration: 0.8 }, '-=0.4')
+          // Ambient float is a CSS animation on `translate` (compositor-only, separate from GSAP's transform).
+          .add(() => scope.classList.add('is-floating'));
+        let frame = requestAnimationFrame(() => (frame = requestAnimationFrame(() => tl.play())));
+
+        // Pause ambient motion whenever the hero is off-screen.
+        ScrollTrigger.create({
+          trigger: scope,
+          start: 'top bottom',
+          end: 'bottom top',
+          onToggle: (self) => scope.classList.toggle('is-idle', !self.isActive),
+        });
+
+        return () => {
+          cancelAnimationFrame(frame);
+          scope.classList.remove('is-floating', 'is-idle');
+        };
+      },
+    },
   );
 
-  // Keep ScrollTrigger positions correct when the pin height changes by tier.
-  useEffect(() => {
-    if (animated) ScrollTrigger.refresh();
-  }, [animated, tier]);
-
   return (
-    <section
-      id="top"
-      ref={root}
-      aria-labelledby="hero-title"
-      className={cn("relative", animated ? (tier === "low" ? "h-[260svh]" : "h-[420vh]") : "h-svh min-h-[640px]")}
-    >
-      <div className="sticky top-0 h-svh min-h-[560px] overflow-hidden bg-navy-950">
-        {/* Poster: first supplied frame. Visible before JS and as the reduced-motion hero. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/assets/video-frames/hero/poster-lg.webp"
-          srcSet="/assets/video-frames/hero/poster-sm.webp 900w, /assets/video-frames/hero/poster-lg.webp 1600w"
-          sizes="100vw"
-          alt="A geometric chrome wolf with glowing blue crystal inlays standing in a dark midnight environment."
-          fetchPriority="high"
-          className="absolute inset-0 size-full object-cover"
-        />
-        <canvas
-          ref={canvasRef}
-          aria-hidden
-          className={cn("absolute inset-0 size-full", !animated && "hidden")}
-        />
+    <section id="home" ref={ref} className="hero theme-dark" aria-labelledby="hero-title">
+      <div className="hero__bg" aria-hidden="true">
+        <span className="hero__glow hero__glow--a" />
+        <span className="hero__glow hero__glow--b" />
+        <span className="hero__grid grid-texture" />
+      </div>
 
-        {/* Readability scrims */}
-        <div
-          data-hero-vignette
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-50"
-          style={{ background: "radial-gradient(ellipse 70% 60% at 50% 45%, transparent 40%, rgb(3 11 30 / 0.9) 100%)" }}
-        />
-        <div
-          data-hero-scrim
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950 from-5% via-navy-950/75 via-45% to-transparent to-75% md:bg-gradient-to-r md:from-navy-950/90 md:via-navy-950/30 md:to-transparent"
-        />
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy-950 to-transparent" />
+      <div className="hero__content container">
+        <div className="hero__copy" data-hero-copy>
+          <p className="eyebrow hero__eyebrow">
+            <span className="eyebrow__line" aria-hidden="true" />
+            Freelance Digital Agency
+          </p>
+          <h1 id="hero-title" className="hero__title">
+            <span className="hero__line">
+              <span className="hero__line-inner">Creative Ideas.</span>
+            </span>{' '}
+            <span className="hero__line">
+              <span className="hero__line-inner">Smart Technology.</span>
+            </span>{' '}
+            <span className="hero__line">
+              <span className="hero__line-inner text-gradient">Real Results.</span>
+            </span>
+          </h1>
+          <p className="hero__desc lead">
+            Wolvo helps brands build websites, mobile apps, digital campaigns and engaging content — designed, built and launched by
+            one flexible freelance team.
+          </p>
+          <div className="hero__actions">
+            <div className="hero__action">
+              <Button size="lg" magnetic onClick={() => openContact({ source: 'hero' })}>
+                Start a Project
+              </Button>
+            </div>
+            <div className="hero__action">
+              <Button size="lg" variant="secondary" href="#projects" icon="arrow-down">
+                View Our Work
+              </Button>
+            </div>
+          </div>
+          <div className="hero__trust">
+            <StatusPill />
+            <ul className="hero__services" role="list" aria-label="Core services">
+              {services.slice(0, 4).map((s) => (
+                <li key={s.id}>{s.title}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
 
-        {/* Intro copy */}
-        <div className="container-x relative flex h-full items-end pb-24 md:items-center md:pb-0">
-          <div data-hero-intro className="max-w-[36rem] md:pt-16">
-            <p className="eyebrow">Digital technology &amp; creative studio</p>
-            <h1 id="hero-title" className="mt-5 text-[clamp(2.6rem,5vw,5.75rem)] leading-[0.95] uppercase">
-              Turning ideas into <span className="text-brand">digital impact.</span>
-            </h1>
-            <p className="mt-6 max-w-lg text-base text-ink/80 md:text-lg">
-              WOLVO is a digital creative and technology studio building apps, websites, brands, campaigns and digital
-              experiences for ambitious businesses.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <ButtonLink href="#contact" magnetic>
-                Start a project
-              </ButtonLink>
-              <ButtonLink href="#work" variant="secondary" icon={false}>
-                Explore our work
-              </ButtonLink>
+      <div className="hero__media" data-hero-media>
+        <div className="hero__stage" data-hero-stage>
+          <div className="hero__image" data-depth="0.35">
+            <Picture
+              set={images.heroWorkspace}
+              priority
+              skipWhen={HERO_VISUAL_HIDDEN}
+              sizes="(min-width: 1024px) 104vw, calc(100vw - 40px)"
+              alt="A laptop showing a website build and a smartphone displaying the Wolvo logo on a desk in a blue-lit studio"
+            />
+            <span className="hero__shade" aria-hidden="true" />
+          </div>
+
+          <div className="hero-badge hero-badge--web" data-depth="0.9" aria-hidden="true">
+            <div className="hero-badge__inner">
+              <span className="hero-badge__icon">
+                <Code2 strokeWidth={1.85} />
+              </span>
+              <span className="hero-badge__text">
+                <strong>Web &amp; App Development</strong>
+                <span>Design · Build · Launch</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="hero-badge hero-badge--ads" data-depth="1.25" aria-hidden="true">
+            <div className="hero-badge__inner">
+              <span className="hero-badge__icon">
+                <TrendingUp strokeWidth={1.85} />
+              </span>
+              <span className="hero-badge__text">
+                <strong>Meta Ads</strong>
+                <svg className="hero-badge__spark" viewBox="0 0 80 22" fill="none">
+                  <path d="M1 19 L14 14 L26 16 L40 9 L53 11 L66 5 L79 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <div className="hero-badge hero-badge--video" data-depth="1.1" aria-hidden="true">
+            <div className="hero-badge__inner">
+              <span className="hero-badge__icon">
+                <Clapperboard strokeWidth={1.85} />
+              </span>
+              <span className="hero-badge__text">
+                <strong>Video Editing</strong>
+                <span className="hero-badge__timeline">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              </span>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Final lockup, revealed when the sequence lands on the W */}
-        <div
-          data-hero-lockup
-          aria-hidden={!animated}
-          className="pointer-events-none absolute inset-x-0 bottom-[7%] flex flex-col items-center text-center"
-        >
-          <p className={cn("opacity-0 font-display text-[clamp(2.2rem,5.5vw,4.5rem)] font-medium tracking-[0.32em] pl-[0.32em]", !animated && "hidden")}>
-            WOLVO
-          </p>
-          <p className={cn("opacity-0 mt-2 eyebrow text-muted", !animated && "hidden")}>
-            Ideas <span className="text-sky">→</span> Digital <span className="text-sky">→</span> Impact
-          </p>
-        </div>
-
-        {/* Story meter */}
-        {animated && (
-          <div
-            data-hero-meter
-            aria-hidden
-            className="invisible absolute bottom-10 left-[var(--gutter)] hidden items-end gap-4 md:flex"
-          >
-            <div className="h-24 w-px bg-line">
-              <div data-hero-meter-bar className="h-full w-full origin-top bg-gradient-to-b from-cyan to-electric" />
-            </div>
-            <div>
-              <p className="eyebrow text-muted">Chapter</p>
-              <p data-chapter className="mt-1 font-display text-sm uppercase tracking-[0.2em]">
-                The wolf
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Scroll cue */}
-        <div
-          data-scroll-cue
-          aria-hidden
-          className="absolute bottom-8 right-[var(--gutter)] hidden flex-col items-center gap-3 md:flex"
-        >
-          <span className="eyebrow text-muted [writing-mode:vertical-rl]">Scroll</span>
-          <span className="relative h-12 w-px overflow-hidden bg-line">
-            <span className="absolute inset-x-0 top-0 h-1/2 bg-cyan" style={{ animation: "scroll-cue 1.8s var(--ease-cinematic) infinite" }} />
-          </span>
-        </div>
+      <div className="hero__scroll container">
+        <a href="#about" className="hero__scroll-link">
+          <span className="hero__scroll-line" aria-hidden="true" />
+          Scroll to explore
+        </a>
       </div>
     </section>
   );

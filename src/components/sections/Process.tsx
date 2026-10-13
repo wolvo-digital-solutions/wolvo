@@ -1,129 +1,103 @@
-"use client";
+import { useRef } from 'react';
+import { gsap } from '@/animations/gsap';
+import { useSectionMotion } from '@/hooks/useSectionMotion';
+import { processSteps } from '@/data/about';
+import { padNumber } from '@/lib/format';
 
-import { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
-import { useExperience } from "@/components/motion/ExperienceProvider";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-
-// Draft process copy — describes the working method, no factual claims.
-const steps = [
-  { name: "Discover", text: "We listen first: your business, your audience, your goals and your constraints." },
-  { name: "Plan", text: "Scope, priorities, timeline and what success looks like — agreed before work begins." },
-  { name: "Design", text: "Concepts and systems shaped with you, reviewed together and refined until they are right." },
-  { name: "Build", text: "Development and production in clear stages, with regular check-ins so nothing drifts." },
-  { name: "Launch", text: "Release and handover, with the next steps mapped out for what comes after go-live." },
-];
-
+/**
+ * "How we work" — progress line driven by ScrollTrigger; horizontal on desktop,
+ * vertical on mobile. Each step's icon "powers on" as the line reaches it.
+ */
 export function Process() {
-  const { ready, reducedMotion, tier } = useExperience();
-  const horizontal = ready && !reducedMotion && tier === "high";
-  return (
-    <section id="process" aria-labelledby="process-title" className="relative">
-      {horizontal ? <HorizontalProcess /> : <VerticalProcess animate={ready && !reducedMotion} />}
-    </section>
-  );
-}
+  const ref = useRef<HTMLDivElement>(null);
 
-function StepBody({ i, s }: { i: number; s: (typeof steps)[number] }) {
-  return (
-    <>
-      <p className="font-display text-sm tracking-[0.24em] text-sky">0{i + 1}</p>
-      <h3 className="mt-3 font-display text-[clamp(2rem,3.4vw,3.25rem)] uppercase leading-none tracking-tight">{s.name}</h3>
-      <p className="mt-5 max-w-sm text-muted">{s.text}</p>
-    </>
-  );
-}
+  useSectionMotion(
+    ref,
+    ({ scope, isDesktop }) => {
+      const q = gsap.utils.selector(scope);
+      const track = q('.process__track')[0];
+      const steps = q('[data-step]');
+      const axis = isDesktop ? 'scaleX' : 'scaleY';
 
-/** Pinned horizontal track; one blue energy line travels Discover → Launch. */
-function HorizontalProcess() {
-  const root = useRef<HTMLDivElement>(null);
+      track.classList.add('is-animated');
 
-  useGSAP(
-    () => {
-      const q = gsap.utils.selector(root);
-      const track = q("[data-track]")[0] as HTMLElement;
-      const distance = () => track.scrollWidth - window.innerWidth;
-      const tl = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: root.current,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.8,
-          invalidateOnRefresh: true,
-        },
-      });
-      // Hold briefly at both ends so the first and last steps are read in place.
-      const HOLD = 0.1;
-      const RUN = 1 - HOLD * 2;
-      tl.to(track, { x: () => -distance(), duration: RUN }, HOLD)
-        .fromTo(q("[data-energy]"), { scaleX: 0.02 }, { scaleX: 1, duration: RUN + HOLD }, 0)
-        .to({}, { duration: HOLD }, RUN + HOLD);
-      q("[data-step]").forEach((step, i) => {
-        const at = (i / steps.length) * (RUN + HOLD);
-        tl.fromTo(step.querySelector("[data-dot]"), { backgroundColor: "#16345e", boxShadow: "0 0 0 rgb(31 203 253 / 0)" }, { backgroundColor: "#1fcbfd", boxShadow: "0 0 24px rgb(31 203 253 / 0.8)", duration: 0.03 }, at);
-        tl.fromTo(step.querySelector("[data-body]"), { opacity: 0.25 }, { opacity: 1, duration: 0.08 }, Math.max(0, at - 0.04));
-      });
-    },
-    { scope: root },
-  );
-
-  return (
-    <div ref={root} className="relative h-[360vh]">
-      <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden pt-[var(--nav-h)]">
-        <div className="container-x">
-          <SectionHeading index="05" eyebrow="How we work" id="process-title" title={<>A clear path, <span className="text-brand">start to launch.</span></>} />
-        </div>
-        <div data-track className="relative mt-16 flex w-max gap-0 pl-[var(--gutter)] pr-[30vw] will-change-transform">
-          {/* Energy line spans the whole track */}
-          <div aria-hidden className="absolute left-[var(--gutter)] right-[30vw] top-[5px] h-px bg-line" />
-          <div
-            aria-hidden
-            data-energy
-            className="absolute left-[var(--gutter)] right-[30vw] top-[4px] h-[3px] origin-left bg-gradient-to-r from-royal via-electric to-cyan shadow-[0_0_18px_rgb(24_172_253/0.7)]"
-          />
-          <ol className="flex">
-            {steps.map((s, i) => (
-              <li key={s.name} data-step className="relative w-[34vw] max-w-[520px] pr-16">
-                <span data-dot aria-hidden className="relative z-10 block size-3 rotate-45 bg-line" />
-                <div data-body className="mt-10">
-                  <StepBody i={i} s={s} />
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function VerticalProcess({ animate }: { animate: boolean }) {
-  const root = useRef<HTMLDivElement>(null);
-  useGSAP(
-    () => {
-      if (!animate) return;
       gsap.fromTo(
-        "[data-vline]",
-        { scaleY: 0 },
-        { scaleY: 1, ease: "none", scrollTrigger: { trigger: "[data-vlist]", start: "top 70%", end: "bottom 60%", scrub: 0.5 } },
+        q('.process__line-fill'),
+        { [axis]: 0 },
+        {
+          [axis]: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: track,
+            start: isDesktop ? 'top 72%' : 'top 75%',
+            end: isDesktop ? 'bottom 62%' : 'bottom 55%',
+            scrub: 0.6,
+            onUpdate: (self) => {
+              steps.forEach((step, i) => {
+                const threshold = (i / Math.max(1, steps.length - 1)) * 0.94 + 0.02;
+                step.classList.toggle('is-active', self.progress >= threshold);
+              });
+            },
+          },
+        },
       );
+
+      return () => track.classList.remove('is-animated');
     },
-    { scope: root, dependencies: [animate] },
+    {
+      reveals: false,
+      intro: (scope) => {
+        gsap.from(scope.querySelectorAll('.process__node'), {
+          scale: 0.85,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.12,
+          ease: 'back.out(1.7)',
+          clearProps: 'transform,opacity',
+          scrollTrigger: { trigger: scope.querySelector('.process__track'), start: 'top 82%', once: true },
+        });
+      },
+    },
   );
+
   return (
-    <div ref={root} className="container-x py-28 md:py-36">
-      <SectionHeading index="05" eyebrow="How we work" id="process-title" title={<>A clear path, <span className="text-brand">start to launch.</span></>} />
-      <ol data-vlist className="relative mt-14 grid gap-12 pl-10 md:grid-cols-2 md:pl-0">
-        <span aria-hidden className="absolute bottom-0 left-[5px] top-0 w-px bg-line md:hidden" />
-        <span aria-hidden data-vline className="absolute bottom-0 left-[5px] top-0 w-px origin-top bg-gradient-to-b from-electric to-cyan md:hidden" />
-        {steps.map((s, i) => (
-          <li key={s.name} className="relative" data-reveal>
-            <span aria-hidden className="absolute -left-10 top-1 block size-3 rotate-45 bg-sky md:hidden" />
-            <StepBody i={i} s={s} />
-          </li>
-        ))}
-      </ol>
+    <div ref={ref} className="process">
+      <div className="process__head">
+        <h3 className="process__title" data-reveal="lines">
+          How we work
+        </h3>
+        <p className="process__desc" data-reveal="up">
+          A simple, transparent process — so you always know what happens next.
+        </p>
+      </div>
+
+      {/* Shared stroke gradient (user-space units, so straight segments paint too). */}
+      <svg className="process__defs" width="0" height="0" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="process-icon-gradient" gradientUnits="userSpaceOnUse" x1="3" y1="3" x2="21" y2="21">
+            <stop offset="0" style={{ stopColor: 'var(--process-icon-from)' }} />
+            <stop offset="1" style={{ stopColor: 'var(--process-icon-to)' }} />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div className="process__track">
+        <span className="process__line" aria-hidden="true">
+          <span className="process__line-fill" />
+        </span>
+        <ol className="process__steps" role="list">
+          {processSteps.map(({ id, title, description, icon: Icon }, i) => (
+            <li key={id} className="process__step" data-step>
+              <span className="process__node" aria-hidden="true">
+                <Icon className="process__icon" strokeWidth={1.6} color="url(#process-icon-gradient)" />
+              </span>
+              <span className="process__num">Step {padNumber(i + 1, 2)}</span>
+              <h4 className="process__step-title">{title}</h4>
+              <p className="process__step-desc">{description}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }

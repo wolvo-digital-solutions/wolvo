@@ -6,12 +6,14 @@ const loaders = {
   project: () => import('./ProjectDialog'),
   article: () => import('./ArticleDialog'),
   indexes: () => import('./IndexDialogs'),
+  githubShare: () => import('./GitHubShareDialog'),
 };
 
 const ContactDialog = lazy(loaders.contact);
 const ProjectDialog = lazy(loaders.project);
 const ArticleDialog = lazy(loaders.article);
 const IndexDialogs = lazy(loaders.indexes);
+const GitHubShareDialog = lazy(loaders.githubShare);
 
 type Key = keyof typeof loaders;
 
@@ -21,13 +23,20 @@ type Key = keyof typeof loaders;
  */
 export function DialogRoot() {
   const state = useUIState();
-  const [seen, setSeen] = useState<Record<Key, boolean>>({ contact: false, project: false, article: false, indexes: false });
+  const [seen, setSeen] = useState<Record<Key, boolean>>({
+    contact: false,
+    project: false,
+    article: false,
+    indexes: false,
+    githubShare: false,
+  });
 
   const wanted: Record<Key, boolean> = {
     contact: state.contact !== null,
     project: state.projectId !== null,
     article: state.articleId !== null,
     indexes: state.projectsIndex || state.articlesIndex,
+    githubShare: state.githubShare,
   };
   const newlyWanted = (Object.keys(wanted) as Key[]).filter((k) => wanted[k] && !seen[k]);
   if (newlyWanted.length) {
@@ -65,6 +74,11 @@ export function DialogRoot() {
       {seen.contact && (
         <Suspense fallback={null}>
           <ContactDialog />
+        </Suspense>
+      )}
+      {seen.githubShare && (
+        <Suspense fallback={null}>
+          <GitHubShareDialog />
         </Suspense>
       )}
     </>

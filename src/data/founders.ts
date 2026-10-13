@@ -25,7 +25,7 @@ export const founders: Founder[] = [
     bio: 'Owns engineering and delivery: architecture, web and app builds, performance and a smooth, stable launch.',
     socialLinks: [
       { platform: 'linkedin', label: 'LinkedIn', href: '' },
-      { platform: 'github', label: 'GitHub', href: '' },
+      { platform: 'github', label: 'GitHub', href: 'https://github.com/wolvo-digital-solutions' },
     ],
     placeholder: true,
   },

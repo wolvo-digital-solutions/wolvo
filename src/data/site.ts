@@ -17,6 +17,14 @@ export const site = {
   // Configured WhatsApp business number (e.g. +1234567890 or set VITE_WHATSAPP_NUMBER).
   whatsapp: import.meta.env.VITE_WHATSAPP_NUMBER || '+1234567890',
   whatsappMessage: 'Hi Wolvo, I would like to discuss a new project!',
+  // Configured GitHub repository details
+  github: {
+    owner: import.meta.env.VITE_GITHUB_OWNER || 'wolvo-digital-solutions',
+    repo: import.meta.env.VITE_GITHUB_REPO || 'wolvo',
+    url: import.meta.env.VITE_GITHUB_REPO_URL || 'https://github.com/wolvo-digital-solutions/wolvo',
+    cloneUrl: import.meta.env.VITE_GITHUB_CLONE_URL || 'https://github.com/wolvo-digital-solutions/wolvo.git',
+    pagesUrl: 'https://wolvo-digital-solutions.github.io/wolvo/',
+  },
 } as const;
 
 /**
@@ -27,7 +35,7 @@ export const socialLinks: SocialLink[] = [
   { platform: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/' },
   { platform: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/' },
   { platform: 'x', label: 'X (Twitter)', href: 'https://x.com/' },
-  { platform: 'github', label: 'GitHub', href: 'https://github.com/' },
+  { platform: 'github', label: 'GitHub', href: 'https://github.com/wolvo-digital-solutions/wolvo' },
 ];
 
 /** Options for the project inquiry form. */

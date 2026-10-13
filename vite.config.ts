@@ -46,6 +46,7 @@ export default defineConfig(({ mode }) => {
   const siteUrl = env.VITE_SITE_URL || DEFAULT_SITE_URL;
 
   return {
+    base: './',
     plugins: [react(), seoFiles(siteUrl)],
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },

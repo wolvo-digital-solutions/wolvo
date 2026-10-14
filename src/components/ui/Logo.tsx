@@ -1,3 +1,5 @@
+import { assetUrl } from '@/lib/url';
+
 interface LogoProps {
   className?: string;
   /** Render as a link to the top of the page. */
@@ -7,15 +9,15 @@ interface LogoProps {
   priority?: boolean;
 }
 
-const MARK = { webp: '/brand/wolvo-mark.webp', png: '/brand/wolvo-mark.png', width: 218, height: 160 } as const;
+const MARK = { width: 218, height: 160 } as const;
 
 /** Official Wolvo mark — the wolf-headed "W" from the brand artwork (transparent, works on light and dark). */
 export function LogoMark({ className = 'logo__mark', priority = false }: { className?: string; priority?: boolean }) {
   return (
     <picture className={className}>
-      <source type="image/webp" srcSet={MARK.webp} />
+      <source type="image/webp" srcSet={assetUrl('/brand/wolvo-mark.webp')} />
       <img
-        src={MARK.png}
+        src={assetUrl('/brand/wolvo-mark.png')}
         width={MARK.width}
         height={MARK.height}
         alt=""

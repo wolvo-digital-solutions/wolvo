@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import type { ImageSet } from '@/data/images';
+import { assetUrl } from '@/lib/url';
 
 interface PictureProps {
   set: ImageSet;
@@ -31,7 +32,7 @@ type Stage = 'primary' | 'fallback' | 'failed';
  */
 export function Picture({ set, alt, sizes, className, imgClassName, priority = false, fallbackSrc, fallback, skipWhen }: PictureProps) {
   const [stage, setStage] = useState<Stage>('primary');
-  const srcset = (ext: string) => set.widths.map((w) => `${set.base}-${w}.${ext} ${w}w`).join(', ');
+  const srcset = (ext: string) => set.widths.map((w) => `${assetUrl(set.base)}-${w}.${ext} ${w}w`).join(', ');
   const common = {
     className: imgClassName,
     width: set.width,
@@ -46,7 +47,7 @@ export function Picture({ set, alt, sizes, className, imgClassName, priority = f
   if (stage === 'fallback' && fallbackSrc) {
     return (
       <picture className={className}>
-        <img {...common} src={fallbackSrc} onError={() => setStage('failed')} />
+        <img {...common} src={assetUrl(fallbackSrc)} onError={() => setStage('failed')} />
       </picture>
     );
   }
@@ -58,7 +59,7 @@ export function Picture({ set, alt, sizes, className, imgClassName, priority = f
       <source type="image/webp" srcSet={srcset('webp')} sizes={sizes} />
       <img
         {...common}
-        src={set.fallback}
+        src={assetUrl(set.fallback)}
         fetchPriority={priority ? 'high' : 'auto'}
         onError={() => setStage(fallbackSrc ? 'fallback' : 'failed')}
       />

@@ -10,13 +10,6 @@ import { Picture } from '@/components/ui/Picture';
 import { StatusPill } from '@/components/ui/StatusPill';
 import './Hero.css';
 
-/**
- * Phones (portrait, and landscape: touch screens no taller than 500px) get a
- * text-only hero: the visual stage is hidden by Hero.css and its image is not
- * downloaded. Keep in sync with Hero.css and the preload `media` in index.html.
- */
-const HERO_VISUAL_HIDDEN = '(max-width: 767px), (pointer: coarse) and (max-height: 500px) and (orientation: landscape)';
-
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { openContact } = useUI();
@@ -143,60 +136,59 @@ export function Hero() {
             </ul>
           </div>
         </div>
-      </div>
 
-      <div className="hero__media" data-hero-media>
-        <div className="hero__stage" data-hero-stage>
-          <div className="hero__image" data-depth="0.35">
-            <Picture
-              set={images.heroWorkspace}
-              priority
-              skipWhen={HERO_VISUAL_HIDDEN}
-              sizes="(min-width: 1024px) 104vw, calc(100vw - 40px)"
-              alt="A laptop showing a website build and a smartphone displaying the Wolvo logo on a desk in a blue-lit studio"
-            />
-            <span className="hero__shade" aria-hidden="true" />
-          </div>
-
-          <div className="hero-badge hero-badge--web" data-depth="0.9" aria-hidden="true">
-            <div className="hero-badge__inner">
-              <span className="hero-badge__icon">
-                <Code2 strokeWidth={1.85} />
-              </span>
-              <span className="hero-badge__text">
-                <strong>Web &amp; App Development</strong>
-                <span>Design · Build · Launch</span>
-              </span>
+        <div className="hero__media" data-hero-media>
+          <div className="hero__stage" data-hero-stage>
+            <div className="hero__image" data-depth="0.35">
+              <Picture
+                set={images.heroWorkspace}
+                priority
+                sizes="(min-width: 1024px) 46vw, calc(100vw - 40px)"
+                alt="A laptop showing a website build and a smartphone displaying the Wolvo logo on a desk in a blue-lit studio"
+              />
+              <span className="hero__shade" aria-hidden="true" />
             </div>
-          </div>
 
-          <div className="hero-badge hero-badge--ads" data-depth="1.25" aria-hidden="true">
-            <div className="hero-badge__inner">
-              <span className="hero-badge__icon">
-                <TrendingUp strokeWidth={1.85} />
-              </span>
-              <span className="hero-badge__text">
-                <strong>Meta Ads</strong>
-                <svg className="hero-badge__spark" viewBox="0 0 80 22" fill="none">
-                  <path d="M1 19 L14 14 L26 16 L40 9 L53 11 L66 5 L79 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-            </div>
-          </div>
-
-          <div className="hero-badge hero-badge--video" data-depth="1.1" aria-hidden="true">
-            <div className="hero-badge__inner">
-              <span className="hero-badge__icon">
-                <Clapperboard strokeWidth={1.85} />
-              </span>
-              <span className="hero-badge__text">
-                <strong>Video Editing</strong>
-                <span className="hero-badge__timeline">
-                  <i />
-                  <i />
-                  <i />
+            <div className="hero-badge hero-badge--web" data-depth="0.9" aria-hidden="true">
+              <div className="hero-badge__inner">
+                <span className="hero-badge__icon">
+                  <Code2 strokeWidth={1.85} />
                 </span>
-              </span>
+                <span className="hero-badge__text">
+                  <strong>Web &amp; App Development</strong>
+                  <span>Design · Build · Launch</span>
+                </span>
+              </div>
+            </div>
+
+            <div className="hero-badge hero-badge--ads" data-depth="1.25" aria-hidden="true">
+              <div className="hero-badge__inner">
+                <span className="hero-badge__icon">
+                  <TrendingUp strokeWidth={1.85} />
+                </span>
+                <span className="hero-badge__text">
+                  <strong>Meta Ads</strong>
+                  <svg className="hero-badge__spark" viewBox="0 0 80 22" fill="none">
+                    <path d="M1 19 L14 14 L26 16 L40 9 L53 11 L66 5 L79 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div className="hero-badge hero-badge--video" data-depth="1.1" aria-hidden="true">
+              <div className="hero-badge__inner">
+                <span className="hero-badge__icon">
+                  <Clapperboard strokeWidth={1.85} />
+                </span>
+                <span className="hero-badge__text">
+                  <strong>Video Editing</strong>
+                  <span className="hero-badge__timeline">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
         </div>

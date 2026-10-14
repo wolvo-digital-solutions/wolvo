@@ -104,8 +104,22 @@ async function variants(name, input, widths, { fallbackWidth } = {}) {
 
 const workspace = await remapHue(SRC.workspace, debrandPurple);
 
-// Hero — full workspace composition.
-await variants('hero-workspace', workspace, [640, 960, 1280, 1672], { fallbackWidth: 1280 });
+// Hero — full 4K workspace composition (up to 3840 UHD) with crisp quality.
+const workspaceMaster = await sharp(workspace)
+  .resize(3840, 2160, { fit: 'cover', position: 'center', kernel: sharp.kernel.lanczos3 })
+  .sharpen({ sigma: 1.15, m1: 1.0, m2: 2.0, x1: 2, y2: 10, y3: 20 })
+  .toBuffer();
+
+for (const w of [640, 960, 1280, 1920, 2560, 3840]) {
+  const h = Math.round((w * 2160) / 3840);
+  const base = sharp(workspaceMaster).resize(w, h, { kernel: sharp.kernel.lanczos3 });
+  await base.clone().avif({ quality: 85, effort: 6 }).toFile(path.join(out, `hero-workspace-${w}.avif`));
+  await base.clone().webp({ quality: 92, effort: 6 }).toFile(path.join(out, `hero-workspace-${w}.webp`));
+  if (w === 1920 || w === 1280) {
+    await base.clone().jpeg({ quality: 90, mozjpeg: true }).toFile(path.join(out, `hero-workspace-${w}.jpg`));
+  }
+}
+console.log('✓ hero-workspace 4K (640, 960, 1280, 1920, 2560, 3840)');
 
 // About visual — the Wolvo studio photo (square).
 await variants('about-office', await remapHue(SRC.office, debrandPurple), [640, 960, 1254], { fallbackWidth: 960 });

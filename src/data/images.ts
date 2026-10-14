@@ -10,10 +10,10 @@ export interface ImageSet {
 export const images = {
   heroWorkspace: {
     base: '/images/hero-workspace',
-    widths: [640, 960, 1280, 1672],
-    fallback: '/images/hero-workspace-1280.jpg',
-    width: 1672,
-    height: 941,
+    widths: [640, 960, 1280, 1920, 2560, 3840],
+    fallback: '/images/hero-workspace-1920.jpg',
+    width: 3840,
+    height: 2160,
   },
   aboutOffice: {
     base: '/images/about-office',

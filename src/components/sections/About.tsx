@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { gsap, MQ } from '@/animations/gsap';
+import { gsap } from '@/animations/gsap';
 import { countUp } from '@/animations/reveal';
 import { useSectionMotion } from '@/hooks/useSectionMotion';
 import { useUI } from '@/context/UIContext';
@@ -37,7 +37,7 @@ export function About() {
     {
       intro: (scope) => {
         const q = gsap.utils.selector(scope);
-        const isDesktop = window.matchMedia(MQ.desktop).matches;
+        const isTwoCol = window.matchMedia('(min-width: 1180px)').matches;
 
         // Stats count upward on entry.
         q('[data-count]').forEach((el) => {
@@ -56,8 +56,8 @@ export function About() {
         const founders = q('.about__founders')[0];
         q('[data-founder]').forEach((el, i) => {
           gsap.from(el, {
-            x: isDesktop ? (i % 2 ? 70 : -70) : 0,
-            y: isDesktop ? 0 : 40,
+            x: isTwoCol ? (i % 2 ? 70 : -70) : 0,
+            y: isTwoCol ? 0 : 40,
             opacity: 0,
             duration: 1,
             delay: i * 0.12,

@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  padding: var(--space-2);
+  padding: clamp(24px, 4vw, 40px);
 }
 
 .gh-dialog__header {
@@ -11,6 +11,7 @@
   align-items: flex-start;
   gap: var(--space-4);
   padding-bottom: var(--space-4);
+  padding-right: 48px;
   border-bottom: 1px solid rgb(var(--ink) / 0.08);
 }
 
@@ -249,8 +250,12 @@
 }
 
 @media (max-width: 640px) {
+  .gh-dialog {
+    padding-top: 56px;
+  }
   .gh-dialog__header {
     flex-direction: column;
+    padding-right: 0;
   }
   .gh-share-grid {
     grid-template-columns: 1fr 1fr;

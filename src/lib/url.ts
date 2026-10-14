@@ -16,3 +16,15 @@ export function isSafeUrl(value: string | undefined | null): value is string {
 export function isExternalUrl(value: string): boolean {
   return /^https?:\/\//i.test(value.trim());
 }
+
+/**
+ * Resolves static asset paths against Vite's base URL so images and icons
+ * work properly both locally and on subpaths like GitHub Pages.
+ */
+export function assetUrl(path: string | undefined | null): string {
+  if (!path) return '';
+  if (/^(?:https?:|\/\/|data:)/i.test(path)) return path;
+  const clean = path.replace(/^\/+/, '');
+  const base = import.meta.env.BASE_URL || './';
+  return base.endsWith('/') ? `${base}${clean}` : `${base}/${clean}`;
+}

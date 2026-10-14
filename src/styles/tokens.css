@@ -59,9 +59,9 @@
   --space-24: 96px;
 
   /* Layout */
-  --container-width: 1280px;
-  --gutter: clamp(20px, 4.5vw, 64px);
-  --section-spacing: clamp(96px, 12vw, 176px);
+  --container-width: 1440px;
+  --gutter: clamp(20px, 4vw, 64px);
+  --section-spacing: clamp(80px, 10vw, 160px);
   --nav-height: 76px;
   /* Inset of framed panels (hero stage in day mode, final CTA). */
   --panel-inset: clamp(8px, 1.1vw, 16px);
@@ -128,6 +128,15 @@
   --color-error: #ff5c67;
   --color-error-text: #ff9aa1;
 
+  /* Aliases */
+  --primary-rgb: 0 102 255;
+  --accent-rgb: 0 210 255;
+  --primary: var(--color-primary);
+  --accent: var(--color-cyan);
+  --text: var(--color-text);
+  --text-muted: var(--color-text-muted);
+  --surface: var(--color-surface);
+
   /* Surfaces */
   --surface-glass: rgba(7, 9, 14, 0.8);
   --surface-control: rgba(13, 18, 31, 0.6);
@@ -190,6 +199,15 @@
   --color-warning: #c27c0e;
   --color-error: #dc2f3c;
   --color-error-text: #b42318;
+
+  /* Aliases */
+  --primary-rgb: 0 98 240;
+  --accent-rgb: 0 144 196;
+  --primary: var(--color-primary);
+  --accent: var(--color-cyan);
+  --text: var(--color-text);
+  --text-muted: var(--color-text-muted);
+  --surface: var(--color-surface);
 
   --surface-glass: rgba(255, 255, 255, 0.82);
   --surface-control: #ffffff;

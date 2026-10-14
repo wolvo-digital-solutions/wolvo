@@ -326,7 +326,7 @@
   gap: var(--space-6);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1180px) {
   .about__founders {
     grid-template-columns: 1fr 1fr;
     gap: var(--space-8);

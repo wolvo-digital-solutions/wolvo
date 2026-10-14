@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Mail, Menu, Share2, X } from 'lucide-react';
+import { Mail, Menu, X } from 'lucide-react';
 import { gsap, MQ, ScrollTrigger, useGSAP } from '@/animations/gsap';
 import { lockScroll, prefersReducedMotion, unlockScroll } from '@/animations/smoothScroll';
 import { useActiveSection } from '@/hooks/useActiveSection';
@@ -9,7 +9,7 @@ import { site, socialLinks } from '@/data/site';
 import { padNumber } from '@/lib/format';
 import { Button } from '@/components/ui/Button';
 import { Logo } from '@/components/ui/Logo';
-import { SocialIcon, SocialList } from '@/components/ui/SocialIcon';
+import { SocialList } from '@/components/ui/SocialIcon';
 import { StatusPill } from '@/components/ui/StatusPill';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import './Navbar.css';
@@ -21,7 +21,7 @@ export function Navbar() {
   const menuTl = useRef<gsap.core.Timeline | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const active = useActiveSection(sectionIds);
-  const { openContact, openGitHubShare } = useUI();
+  const { openContact } = useUI();
 
   useGSAP(
     () => {
@@ -127,16 +127,6 @@ export function Navbar() {
         </nav>
 
         <div className="nav__actions">
-          <button
-            type="button"
-            className="nav__github-btn"
-            onClick={openGitHubShare}
-            aria-label="GitHub Repository & Share"
-            title="GitHub Repository & Share"
-          >
-            <SocialIcon platform="github" />
-            <span className="nav__github-text">Repo</span>
-          </button>
           <ThemeToggle className="nav__theme-toggle" />
           <Button size="sm" magnetic className="nav__cta" onClick={() => startProject('nav')}>
             Start a Project
@@ -196,19 +186,6 @@ export function Navbar() {
             </div>
             <div className="mobile-menu__meta" data-menu-item>
               <ThemeToggle showLabel className="mobile-menu__theme-toggle" />
-              <button
-                type="button"
-                className="mobile-menu__github-btn"
-                tabIndex={menuOpen ? 0 : -1}
-                onClick={() => {
-                  setMenuOpen(false);
-                  openGitHubShare();
-                }}
-              >
-                <SocialIcon platform="github" />
-                <span>GitHub Repo &amp; Share</span>
-                <Share2 size={15} aria-hidden="true" style={{ marginLeft: 'auto' }} />
-              </button>
               <a href={`mailto:${site.email}`} className="mobile-menu__email" tabIndex={menuOpen ? 0 : -1}>
                 <Mail strokeWidth={1.85} aria-hidden="true" />
                 {site.email}

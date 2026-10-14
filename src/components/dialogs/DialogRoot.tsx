@@ -31,17 +31,20 @@ export function DialogRoot() {
     githubShare: false,
   });
 
-  const wanted: Record<Key, boolean> = {
+  const isWanted: Record<Key, boolean> = {
     contact: state.contact !== null,
     project: state.projectId !== null,
     article: state.articleId !== null,
     indexes: state.projectsIndex || state.articlesIndex,
     githubShare: state.githubShare,
   };
-  const newlyWanted = (Object.keys(wanted) as Key[]).filter((k) => wanted[k] && !seen[k]);
-  if (newlyWanted.length) {
-    setSeen((s) => ({ ...s, ...Object.fromEntries(newlyWanted.map((k) => [k, true])) }));
-  }
+
+  useEffect(() => {
+    const newlyWanted = (Object.keys(isWanted) as Key[]).filter((k) => isWanted[k] && !seen[k]);
+    if (newlyWanted.length) {
+      setSeen((s) => ({ ...s, ...Object.fromEntries(newlyWanted.map((k) => [k, true])) }));
+    }
+  }, [state, seen]);
 
   useEffect(() => {
     const prefetch = () => Object.values(loaders).forEach((load) => void load());
@@ -56,27 +59,27 @@ export function DialogRoot() {
   return (
     <>
       {/* Separate boundaries so loading one dialog never hides another that is open. */}
-      {seen.indexes && (
+      {(seen.indexes || isWanted.indexes) && (
         <Suspense fallback={null}>
           <IndexDialogs />
         </Suspense>
       )}
-      {seen.project && (
+      {(seen.project || isWanted.project) && (
         <Suspense fallback={null}>
           <ProjectDialog />
         </Suspense>
       )}
-      {seen.article && (
+      {(seen.article || isWanted.article) && (
         <Suspense fallback={null}>
           <ArticleDialog />
         </Suspense>
       )}
-      {seen.contact && (
+      {(seen.contact || isWanted.contact) && (
         <Suspense fallback={null}>
           <ContactDialog />
         </Suspense>
       )}
-      {seen.githubShare && (
+      {(seen.githubShare || isWanted.githubShare) && (
         <Suspense fallback={null}>
           <GitHubShareDialog />
         </Suspense>

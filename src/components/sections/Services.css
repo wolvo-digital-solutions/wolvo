@@ -349,6 +349,30 @@
   min-height: 80px;
 }
 
+@media (max-width: 479px) {
+  .process__line {
+    left: 28px;
+    top: 28px;
+    bottom: 28px;
+  }
+
+  .process__node {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-sm);
+  }
+
+  .process__node svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .process__step {
+    padding-left: 72px;
+    min-height: 56px;
+  }
+}
+
 /* Glass tile with a gradient-stroked line icon. */
 .process__node {
   position: absolute;

@@ -114,6 +114,11 @@ a {
   text-decoration: none;
 }
 
+a[href],
+summary {
+  cursor: pointer;
+}
+
 button,
 input,
 select,

@@ -80,7 +80,7 @@ export function ProjectsIndexDialog() {
             Portfolio
           </p>
           <h2 id="projects-index-title" className="index-dialog__title">
-            All Projects
+            All Case Studies &amp; Deliverables
           </h2>
           <FilterBar
             label="Filter projects by category"

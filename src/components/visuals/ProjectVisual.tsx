@@ -1,5 +1,6 @@
 import { useId, type CSSProperties, type ReactNode } from 'react';
 import type { Project, ProjectVisualKind } from '@/types/content';
+import { assetUrl } from '@/lib/url';
 import './visuals.css';
 
 const ACCENTS: Record<ProjectVisualKind, string> = {
@@ -433,10 +434,30 @@ export function ProjectVisual({ project, className = '', ratio }: ProjectVisualP
   const style = v({ '--pv-accent': ACCENTS[project.visual], ...(ratio ? { aspectRatio: ratio } : {}) });
 
   if (project.image) {
+    const isLocalProject = project.image.startsWith('/images/projects/');
+    const baseWithoutExt = project.image.replace(/\.(webp|avif|jpg|png)$/, '');
     return (
       <div className={`pv pv--image ${className}`} style={style}>
         <div className="pv__inner" data-parallax>
-          <img src={project.image} alt={project.imageAlt ?? project.title} loading="lazy" decoding="async" />
+          {isLocalProject ? (
+            <picture>
+              <source type="image/avif" srcSet={assetUrl(`${baseWithoutExt}.avif`)} />
+              <source type="image/webp" srcSet={assetUrl(`${baseWithoutExt}.webp`)} />
+              <img
+                src={assetUrl(`${baseWithoutExt}.jpg`)}
+                alt={project.imageAlt ?? project.title}
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+          ) : (
+            <img
+              src={assetUrl(project.image)}
+              alt={project.imageAlt ?? project.title}
+              loading="lazy"
+              decoding="async"
+            />
+          )}
         </div>
       </div>
     );

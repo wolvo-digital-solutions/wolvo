@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Our Tech Stack — logo marquee + category grid
+   Our Tech Stack — logo marquee
    Official marks render in a single colour (currentColor): several official
    brand colours are purple or black, which the Wolvo palette excludes and
    which would vanish on the dark theme.
@@ -25,7 +25,7 @@
 .stack__marquee {
   display: grid;
   gap: var(--space-4);
-  margin-bottom: clamp(48px, 6vw, 80px);
+  margin-bottom: 0;
 }
 
 .stack__row {
@@ -124,163 +124,5 @@
   .stack-pill__logo {
     width: 22px;
     height: 22px;
-  }
-}
-
-/* --- Category grid ----------------------------------------------------- */
-
-.stack__grid {
-  display: grid;
-  gap: var(--space-5);
-}
-
-@media (min-width: 640px) {
-  .stack__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1180px) {
-  .stack__grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--space-6);
-  }
-}
-
-.stack-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(22px, 2.2vw, 28px);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  background: var(--surface-card);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-  isolation: isolate;
-  transition:
-    border-color 0.4s var(--ease-out),
-    box-shadow 0.4s var(--ease-out),
-    transform 0.4s var(--ease-out);
-}
-
-/* Accent hairline that lights up on hover. */
-.stack-card::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 2px;
-  background: var(--gradient-brand);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 0.6s var(--ease-out);
-}
-
-@media (hover: hover) {
-  .stack-card:hover {
-    border-color: var(--color-border-highlight);
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-4px);
-  }
-
-  .stack-card:hover::before {
-    transform: scaleX(1);
-  }
-}
-
-.stack-card__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.stack-card__icon {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 13px;
-  border: 1px solid var(--color-border-highlight);
-  background:
-    radial-gradient(80% 80% at 50% 20%, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent 70%),
-    var(--color-surface-elevated);
-  color: var(--color-primary-hover);
-}
-
-.stack-card__icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-.stack-card__index {
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-subtle);
-}
-
-.stack-card__title {
-  margin-top: var(--space-5);
-  font-size: 1.25rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-}
-
-.stack-card__desc {
-  margin-top: 6px;
-  font-size: var(--fs-small);
-  line-height: 1.55;
-  color: var(--color-text-secondary);
-}
-
-.stack-card__tools {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: var(--space-5) 0 0;
-  padding: var(--space-5) 0 0;
-  list-style: none;
-  border-top: 1px solid var(--color-border);
-}
-
-.stack-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 36px;
-  padding: 0 12px 0 10px;
-  border-radius: 10px;
-  border: 1px solid var(--color-border);
-  background: rgb(var(--ink) / 0.03);
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  white-space: nowrap;
-  color: var(--color-text);
-  transition:
-    border-color var(--dur-hover) var(--ease-out),
-    background-color var(--dur-hover) var(--ease-out);
-}
-
-.stack-chip--text {
-  padding-left: 12px;
-  color: var(--color-text-secondary);
-}
-
-.stack-chip__logo {
-  width: 17px;
-  height: 17px;
-  flex: none;
-  color: var(--color-text);
-  transition: color var(--dur-hover) var(--ease-out);
-}
-
-@media (hover: hover) {
-  .stack-chip:hover {
-    border-color: var(--color-border-highlight);
-    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-  }
-
-  .stack-chip:hover .stack-chip__logo {
-    color: var(--color-cyan);
   }
 }

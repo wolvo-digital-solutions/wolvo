@@ -35,16 +35,15 @@ export function DialogRoot() {
     contact: state.contact !== null,
     project: state.projectId !== null,
     article: state.articleId !== null,
-    indexes: state.projectsIndex || state.articlesIndex,
+    indexes: Boolean(state.projectsIndex || state.articlesIndex),
     githubShare: state.githubShare,
   };
 
-  useEffect(() => {
-    const newlyWanted = (Object.keys(isWanted) as Key[]).filter((k) => isWanted[k] && !seen[k]);
-    if (newlyWanted.length) {
-      setSeen((s) => ({ ...s, ...Object.fromEntries(newlyWanted.map((k) => [k, true])) }));
-    }
-  }, [state, seen]);
+  // Adjust state during render when a dialog is first requested
+  const newlyWanted = (Object.keys(isWanted) as Key[]).filter((k) => isWanted[k] && !seen[k]);
+  if (newlyWanted.length) {
+    setSeen((prev) => ({ ...prev, ...Object.fromEntries(newlyWanted.map((k) => [k, true])) }));
+  }
 
   useEffect(() => {
     const prefetch = () => Object.values(loaders).forEach((load) => void load());

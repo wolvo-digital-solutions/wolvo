@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   buildCloneUrl,
   buildGitHubRepoUrl,
@@ -54,10 +54,28 @@ describe('github helpers', () => {
   });
 
   it('gracefully handles API network errors or missing repos without throwing', async () => {
-    // Non-existent repo to verify clear error structure
-    const result = await fetchGitHubRepoDetails('wolvo-nonexistent-org-123456789', 'unknown-repo-xyz');
-    expect(result.success).toBe(false);
-    expect(typeof result.error).toBe('string');
-    expect(result.error?.length).toBeGreaterThan(5);
+    const originalFetch = globalThis.fetch;
+    try {
+      // Mock 404 response
+      globalThis.fetch = vi.fn().mockResolvedValueOnce({
+        status: 404,
+        ok: false,
+        headers: new Headers(),
+      } as Response);
+
+      const result404 = await fetchGitHubRepoDetails('wolvo-nonexistent-org', 'unknown-repo-xyz');
+      expect(result404.success).toBe(false);
+      expect(result404.isNotFound).toBe(true);
+      expect(result404.error).toContain('was not found or is set to private');
+
+      // Mock network failure / abort
+      globalThis.fetch = vi.fn().mockRejectedValueOnce(new Error('Failed to fetch'));
+
+      const resultNetworkError = await fetchGitHubRepoDetails('wolvo-digital-solutions', 'wolvo');
+      expect(resultNetworkError.success).toBe(false);
+      expect(resultNetworkError.error).toContain('Network error connecting to GitHub');
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });

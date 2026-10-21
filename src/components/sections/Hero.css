@@ -145,76 +145,68 @@
   background: var(--color-primary);
 }
 
-/* --- Visual Stage Layout (Desktop Full-Bleed & Mobile Showcase) --- */
+/* --- Visual Stage Layout (Desktop, Tablet & Mobile Cinematic Stage) --- */
 
-@media (min-width: 1024px) {
-  .hero {
-    min-height: max(620px, 100svh);
-    justify-content: center;
-    padding-top: calc(var(--nav-height) + clamp(24px, 4vw, 56px));
-    padding-bottom: clamp(48px, 6vw, 96px);
-  }
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: none;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
 
-  .hero__media {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    pointer-events: none;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-  }
+.hero__stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  margin: 0;
+}
 
-  .hero__stage {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    margin: 0;
-  }
+.hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
 
-  .hero__image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    overflow: hidden;
-  }
+.hero__image picture,
+.hero__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 68% center;
+  display: block;
+}
 
-  .hero__image picture,
-  .hero__image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 68% center;
-  }
-
-  .hero__shade {
-    display: block;
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      linear-gradient(90deg,
-        var(--color-bg) 0%,
-        rgb(var(--bg-rgb) / 0.94) min(320px, 28vw),
-        rgb(var(--bg-rgb) / 0.72) min(520px, 46vw),
-        rgb(var(--bg-rgb) / 0.2) 68%,
-        transparent 86%
-      ),
-      linear-gradient(180deg,
-        var(--color-bg) 0%,
-        transparent clamp(40px, 8vh, 80px),
-        transparent calc(100% - clamp(60px, 12vh, 120px)),
-        var(--color-bg) 100%
-      );
-  }
+.hero__shade {
+  display: block;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg,
+      var(--color-bg) 0%,
+      rgb(var(--bg-rgb) / 0.94) min(320px, 28vw),
+      rgb(var(--bg-rgb) / 0.72) min(520px, 46vw),
+      rgb(var(--bg-rgb) / 0.2) 68%,
+      transparent 86%
+    ),
+    linear-gradient(180deg,
+      var(--color-bg) 0%,
+      transparent clamp(40px, 8vh, 80px),
+      transparent calc(100% - clamp(60px, 12vh, 120px)),
+      var(--color-bg) 100%
+    );
 }
 
 @media (min-width: 1440px) {
@@ -224,118 +216,128 @@
   }
 }
 
-/* Mobile & Tablet Screens (< 1024px) — Professional Responsive Flow */
-@media (max-width: 1023px) {
+/* Tablet Screens (768px to 1023px) — Image stays beside copy */
+@media (max-width: 1023px) and (min-width: 768px) {
   .hero {
-    min-height: auto;
-    justify-content: flex-start;
-    padding-top: calc(var(--nav-height) + clamp(20px, 4vw, 36px));
-    padding-bottom: clamp(48px, 8vw, 72px);
+    min-height: max(580px, 100svh);
+    padding-top: calc(var(--nav-height) + clamp(18px, 3vw, 32px));
+    padding-bottom: clamp(40px, 6vw, 64px);
   }
 
-  .hero::after {
-    display: none;
+  .hero__copy {
+    max-width: min(540px, 58vw);
   }
 
-  .hero__content {
-    width: 100%;
-    position: relative;
-    z-index: 2;
+  .hero__image picture,
+  .hero__image img {
+    object-position: 74% center;
+  }
+
+  .hero__shade {
+    background:
+      linear-gradient(90deg,
+        var(--color-bg) 0%,
+        rgb(var(--bg-rgb) / 0.96) min(280px, 35vw),
+        rgb(var(--bg-rgb) / 0.72) min(460px, 54vw),
+        rgb(var(--bg-rgb) / 0.2) 75%,
+        transparent 90%
+      ),
+      linear-gradient(180deg,
+        var(--color-bg) 0%,
+        transparent clamp(30px, 6vh, 60px),
+        transparent calc(100% - clamp(40px, 8vh, 80px)),
+        var(--color-bg) 100%
+      );
+  }
+}
+
+/* Medium Mobile / Landscape (540px to 767px) — Image stays beside copy */
+@media (max-width: 767px) and (min-width: 540px) {
+  .hero {
+    min-height: max(520px, 100svh);
+    padding-top: calc(var(--nav-height) + 16px);
+    padding-bottom: 36px;
+  }
+
+  .hero__copy {
+    max-width: min(420px, 64vw);
+  }
+
+  .hero__title {
+    font-size: clamp(2rem, 5.2vw, 2.45rem);
+  }
+
+  .hero__image picture,
+  .hero__image img {
+    object-position: 78% center;
+  }
+
+  .hero__shade {
+    background:
+      linear-gradient(90deg,
+        var(--color-bg) 0%,
+        rgb(var(--bg-rgb) / 0.95) 48%,
+        rgb(var(--bg-rgb) / 0.6) 72%,
+        transparent 92%
+      ),
+      linear-gradient(180deg,
+        var(--color-bg) 0%,
+        transparent 20%,
+        transparent 80%,
+        var(--color-bg) 100%
+      );
+  }
+}
+
+/* Compact Mobile Screens (< 540px) — Image stays beside & around copy, never below */
+@media (max-width: 539px) {
+  .hero {
+    min-height: max(520px, 100svh);
+    padding-top: calc(var(--nav-height) + 12px);
+    padding-bottom: 32px;
   }
 
   .hero__copy {
     max-width: 100%;
   }
 
-  .hero__media {
-    position: relative;
-    inset: auto;
-    z-index: 2;
-    display: block;
-    width: 100%;
-    margin-top: clamp(24px, 5vw, 40px);
-    padding: 0 var(--gutter);
-    max-width: var(--container-width);
-    margin-inline: auto;
-    pointer-events: auto;
-  }
-
-  .hero__stage {
-    position: relative;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 10;
-    border-radius: clamp(14px, 2.8vw, 22px);
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow:
-      0 20px 50px -15px rgba(0, 102, 255, 0.35),
-      0 0 0 1px rgba(0, 210, 255, 0.15);
-    background: #050811;
-  }
-
-  .hero__image {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .hero__image picture,
-  .hero__image img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-    object-position: center center;
-  }
-
-  .hero__shade {
-    display: none;
-  }
-}
-
-/* Mobile Screens (<= 767px) — Compact, Punchy, Magazine-Grade Flow */
-@media (max-width: 767px) {
-  .hero {
-    padding-top: calc(var(--nav-height) + 12px);
-    padding-bottom: 40px;
-  }
-
   .hero__eyebrow {
     margin-bottom: var(--space-2);
+    font-size: 0.6875rem;
   }
 
   .hero__title {
-    font-size: clamp(2.05rem, 8.5vw, 2.65rem);
-    line-height: 1.08;
+    font-size: clamp(1.85rem, 8.2vw, 2.35rem);
+    line-height: 1.1;
+    letter-spacing: -0.035em;
   }
 
   .hero__desc {
     margin-top: var(--space-3);
-    font-size: 0.92rem;
-    line-height: 1.48;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    max-width: 32ch;
   }
 
   .hero__actions {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
     gap: 8px;
     margin-top: var(--space-4);
   }
 
   .hero__action {
-    flex: 1 1 50%;
+    flex: 1 1 calc(50% - 4px);
+    min-width: 130px;
   }
 
   .hero__action > .btn,
   .hero__action > .magnetic,
   .hero__action > .magnetic > .btn {
     width: 100%;
-    padding: 0 12px;
     min-height: 44px;
-    font-size: var(--fs-xs);
+    padding: 0 12px;
+    font-size: 0.8125rem;
     justify-content: center;
   }
 
@@ -348,13 +350,39 @@
     display: none;
   }
 
-  .hero__media {
-    margin-top: 16px;
+  /* Keep the image right beside and around the text — never below */
+  .hero__image picture,
+  .hero__image img {
+    object-position: 82% 25%;
+    opacity: 0.88;
   }
 
-  .hero__stage {
-    aspect-ratio: 16 / 9.5;
-    border-radius: 14px;
+  .hero__shade {
+    background:
+      linear-gradient(90deg,
+        var(--color-bg) 0%,
+        rgb(var(--bg-rgb) / 0.94) 55%,
+        rgb(var(--bg-rgb) / 0.65) 75%,
+        rgb(var(--bg-rgb) / 0.3) 90%,
+        transparent 100%
+      ),
+      linear-gradient(180deg,
+        var(--color-bg) 0%,
+        transparent 12%,
+        transparent 80%,
+        var(--color-bg) 100%
+      );
+  }
+}
+
+/* Ultra-narrow screens (<= 350px) */
+@media (max-width: 350px) {
+  .hero__action {
+    flex: 1 1 100%;
+  }
+
+  .hero__title {
+    font-size: 1.65rem;
   }
 }
 

@@ -125,16 +125,16 @@ export function Projects() {
         <SectionHeading
           id="projects-title"
           index="04"
-          eyebrow="Our Work"
+          eyebrow="Case Studies"
           title={
             <>
-              Featured <span className="text-muted">Projects</span>
+              Client Work &amp; <span className="text-muted">Proven Results</span>
             </>
           }
-          description="A selection of the websites, apps, campaigns and content we design and build — each one shaped around a clear business goal."
+          description="Real-world digital products, apps, and campaigns engineered to solve specific client challenges and deliver measurable business outcomes."
           actions={
             <Button variant="secondary" onClick={openProjectsIndex}>
-              View All Projects
+              View All Case Studies
             </Button>
           }
         />

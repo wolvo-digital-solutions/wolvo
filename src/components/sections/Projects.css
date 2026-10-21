@@ -99,11 +99,46 @@
   color: var(--color-primary-hover);
 }
 
-.project-card__category {
+.project-card__badges {
   position: absolute;
   top: clamp(14px, 1.6vw, 20px);
   left: clamp(14px, 1.6vw, 20px);
+  right: clamp(14px, 1.6vw, 20px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   z-index: 3;
+  pointer-events: none;
+}
+
+.project-card__category {
+  position: static;
+}
+
+.project-card__metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--fs-xs);
+  border-color: rgba(0, 102, 255, 0.4);
+  background: rgba(7, 9, 14, 0.76);
+  backdrop-filter: blur(8px);
+  color: var(--color-text-subtle);
+}
+
+.project-card__metric strong {
+  color: var(--color-primary-hover);
+  font-weight: 700;
+}
+
+.project-card__client {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary-hover);
+  margin-bottom: 5px;
 }
 
 .project-card__info {

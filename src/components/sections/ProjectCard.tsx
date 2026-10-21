@@ -16,7 +16,7 @@ interface ProjectCardProps {
 export function ProjectCard({ project, index, onOpen, onFocus, variant = 'rail', headingLevel = 'h3' }: ProjectCardProps) {
   const Heading = headingLevel;
   return (
-    <article className={`project-card project-card--${variant}`} data-carousel-item data-project-card data-cursor="View" onFocus={onFocus}>
+    <article className={`project-card project-card--${variant}`} data-carousel-item data-project-card onFocus={onFocus}>
       <div className="project-card__media theme-dark">
         <ProjectVisual project={project} />
         <div className="project-card__overlay" aria-hidden="true">
@@ -28,10 +28,17 @@ export function ProjectCard({ project, index, onOpen, onFocus, variant = 'rail',
             ))}
           </ul>
           <span className="project-card__overlay-cta">
-            View project <ArrowUpRight strokeWidth={2} />
+            Case Study <ArrowUpRight strokeWidth={2} />
           </span>
         </div>
-        <span className="badge badge--glass project-card__category">{project.category}</span>
+        <div className="project-card__badges">
+          <span className="badge badge--glass project-card__category">{project.category}</span>
+          {project.result && (
+            <span className="badge badge--glass project-card__metric">
+              <strong>{project.result.metric}</strong> {project.result.label}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="project-card__info">
@@ -39,10 +46,11 @@ export function ProjectCard({ project, index, onOpen, onFocus, variant = 'rail',
           {padNumber(index + 1, 2)}
         </span>
         <div className="project-card__text">
+          <p className="project-card__client">{project.client}</p>
           <Heading className="project-card__title">
             <button type="button" className="project-card__link" onClick={() => onOpen(project.id)}>
               {project.title}
-              <span className="sr-only">, view project details</span>
+              <span className="sr-only">, view case study</span>
             </button>
           </Heading>
           <p className="project-card__desc">{project.description}</p>

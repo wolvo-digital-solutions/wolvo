@@ -60,7 +60,7 @@
 
   /* Layout */
   --container-width: 1440px;
-  --gutter: clamp(20px, 4vw, 64px);
+  --gutter: clamp(16px, 4vw, 64px);
   --section-spacing: clamp(80px, 10vw, 160px);
   --nav-height: 76px;
   /* Inset of framed panels (hero stage in day mode, final CTA). */

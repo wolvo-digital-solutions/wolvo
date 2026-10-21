@@ -223,3 +223,13 @@
     display: none;
   }
 }
+
+@media (max-width: 380px) {
+  .article-card--compact .article-card__cover {
+    width: 84px;
+  }
+  .article-card--compact .article-card__body {
+    padding: 10px 12px;
+  }
+}
+

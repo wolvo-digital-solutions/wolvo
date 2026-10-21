@@ -21,7 +21,7 @@ interface ArticleCardProps {
 export function ArticleCard({ article, variant = 'grid', onOpen, headingLevel = 'h3' }: ArticleCardProps) {
   const Heading = headingLevel;
   return (
-    <article className={`article-card article-card--${variant}`} data-reveal-item data-carousel-item data-cursor="Read">
+    <article className={`article-card article-card--${variant}`} data-reveal-item data-carousel-item>
       <div className="article-card__cover">
         {article.coverImage ? (
           <Picture set={article.coverImage} alt="" sizes={COVER_SIZES[variant]} fallback={<CoverArt variant={article.cover} />} />

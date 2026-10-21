@@ -3,7 +3,6 @@ import { gsap, ScrollTrigger } from '@/animations/gsap';
 import { useSectionMotion } from '@/hooks/useSectionMotion';
 import { techGroups, type TechTool } from '@/data/techStack';
 import { techLogos } from '@/data/techLogos';
-import { padNumber } from '@/lib/format';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import './TechStack.css';
 
@@ -101,20 +100,6 @@ export function TechStack() {
           scrollTrigger: { trigger: marquee, start: 'top 90%', once: true },
         });
 
-        // Tools pop into each category card after the card rises.
-        gsap.utils.toArray<HTMLElement>('.stack-card', scope).forEach((card) => {
-          gsap.from(card.querySelectorAll('.stack-chip'), {
-            y: 12,
-            opacity: 0,
-            duration: 0.6,
-            stagger: 0.045,
-            delay: 0.25,
-            ease: 'power3.out',
-            clearProps: 'transform,opacity',
-            scrollTrigger: { trigger: card, start: 'top 88%', once: true },
-          });
-        });
-
         return () => {
           listeners.forEach((off) => off());
           rows.forEach((row) => row.classList.remove('is-looping'));
@@ -140,7 +125,16 @@ export function TechStack() {
         />
       </div>
 
-      {/* Decorative motion strip; the category grid below is the accessible list. */}
+      {/* Accessible list of technologies for screen readers */}
+      <div className="sr-only">
+        <h3>Technologies and Tools</h3>
+        <ul>
+          {unique(techGroups.flatMap((g) => g.tools)).map((tool) => (
+            <li key={tool.name}>{tool.name}</li>
+          ))}
+        </ul>
+      </div>
+
       <div className="stack__marquee" aria-hidden="true">
         {ROWS.map((tools, i) => (
           <div className="stack__row" data-direction={i % 2 ? 1 : -1} key={i}>
@@ -154,38 +148,6 @@ export function TechStack() {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="container">
-        <div className="stack__grid" data-reveal="stagger">
-          {techGroups.map((group, i) => {
-            const Icon = group.icon;
-            return (
-              <article className={`stack-card stack-card--${group.id}`} key={group.id} data-reveal-item aria-labelledby={`stack-${group.id}`}>
-                <div className="stack-card__head">
-                  <span className="stack-card__icon" aria-hidden="true">
-                    <Icon strokeWidth={1.85} />
-                  </span>
-                  <span className="stack-card__index" aria-hidden="true">
-                    {padNumber(i + 1, 2)}
-                  </span>
-                </div>
-                <h3 id={`stack-${group.id}`} className="stack-card__title">
-                  {group.title}
-                </h3>
-                <p className="stack-card__desc">{group.description}</p>
-                <ul className="stack-card__tools" role="list">
-                  {group.tools.map((tool) => (
-                    <li key={tool.name} className={`stack-chip${tool.logo ? '' : ' stack-chip--text'}`}>
-                      <Logo tool={tool} className="stack-chip__logo" />
-                      {tool.name}
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            );
-          })}
-        </div>
       </div>
     </section>
   );

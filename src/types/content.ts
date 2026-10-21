@@ -38,11 +38,23 @@ export type ProjectVisualKind =
   | 'editor'
   | 'brand';
 
+export interface ProjectResult {
+  metric: string;
+  label: string;
+}
+
 export interface Project {
   id: string;
   title: string;
+  client: string;
   category: ProjectCategory;
   description: string;
+  /** The core problem or client challenge faced before the project. */
+  challenge: string;
+  /** What Wolvo engineered, designed and launched to solve it. */
+  solution: string;
+  /** Primary business outcome or measurable impact. */
+  result?: ProjectResult;
   /** Longer copy shown in the project detail dialog. */
   overview: string;
   services: string[];

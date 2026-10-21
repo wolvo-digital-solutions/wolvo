@@ -15,7 +15,6 @@ import { Articles } from '@/components/sections/Articles';
 import { Testimonials } from '@/components/sections/Testimonials';
 import { FinalCTA } from '@/components/sections/FinalCTA';
 import { DialogRoot } from '@/components/dialogs/DialogRoot';
-import { CustomCursor } from '@/components/ui/CustomCursor';
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton';
 
 /** Page flow: Navbar → Hero → About → Services → Tech Stack → Projects → Articles → Reviews → Final CTA → Footer. */
@@ -56,7 +55,6 @@ export default function App() {
   return (
     <ThemeProvider>
       <UIProvider>
-        <CustomCursor />
         <a href="#main" className="skip-link">
           Skip to content
         </a>

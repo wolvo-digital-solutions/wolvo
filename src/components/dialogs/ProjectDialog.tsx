@@ -1,4 +1,4 @@
-import { Info } from 'lucide-react';
+import { CheckCircle2, Target } from 'lucide-react';
 import { useUI, useUIState } from '@/context/UIContext';
 import { useStickyValue } from '@/hooks/useStickyValue';
 import { projects } from '@/data/projects';
@@ -20,8 +20,8 @@ export default function ProjectDialog() {
     closeProject();
     openContact({
       service: project.services.find((s) => serviceTitles.includes(s)),
-      message: `Hi Wolvo, I’m interested in a project similar to “${project.title}”. `,
-      source: `project-${project.id}`,
+      message: `Hi Wolvo, I’m interested in discussing a project similar to the “${project.title}” case study. `,
+      source: `case-study-${project.id}`,
     });
   };
 
@@ -34,22 +34,49 @@ export default function ProjectDialog() {
           </div>
           <div className="project-dialog__body">
             <div className="project-dialog__main">
-              <span className="badge badge--accent">{project.category}</span>
+              <div className="project-dialog__eyebrow-row">
+                <span className="project-dialog__client-name">{project.client}</span>
+                <span className="badge badge--accent">{project.category}</span>
+              </div>
               <h2 id="project-dialog-title" className="project-dialog__title">
                 {project.title}
               </h2>
               <p className="project-dialog__overview">{project.overview}</p>
-              {project.placeholder && (
-                <p className="project-dialog__note">
-                  <Info strokeWidth={1.85} aria-hidden="true" />
-                  Sample project illustrating this service — the full case study is coming soon.
-                </p>
+
+              {project.result && (
+                <div className="case-study__highlight">
+                  <span className="case-study__stat-value">{project.result.metric}</span>
+                  <span className="case-study__stat-label">{project.result.label}</span>
+                </div>
               )}
+
+              <div className="case-study__breakdown">
+                <div className="case-study__card">
+                  <div className="case-study__card-header">
+                    <Target className="case-study__card-icon" strokeWidth={1.85} aria-hidden="true" />
+                    <h3 className="case-study__card-title">The Challenge</h3>
+                  </div>
+                  <p className="case-study__card-body">{project.challenge}</p>
+                </div>
+                <div className="case-study__card">
+                  <div className="case-study__card-header">
+                    <CheckCircle2 className="case-study__card-icon is-success" strokeWidth={1.85} aria-hidden="true" />
+                    <h3 className="case-study__card-title">Wolvo’s Solution</h3>
+                  </div>
+                  <p className="case-study__card-body">{project.solution}</p>
+                </div>
+              </div>
             </div>
             <aside className="project-dialog__aside" aria-label="Project details">
               <dl className="project-dialog__facts">
                 <div>
-                  <dt>Services</dt>
+                  <dt>Client</dt>
+                  <dd>
+                    <strong className="project-dialog__fact-highlight">{project.client}</strong>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Services Delivered</dt>
                   <dd>
                     <ul className="tag-list">
                       {project.services.map((s) => (
@@ -61,7 +88,7 @@ export default function ProjectDialog() {
                   </dd>
                 </div>
                 <div>
-                  <dt>Technology</dt>
+                  <dt>Technologies Used</dt>
                   <dd>
                     <ul className="tag-list">
                       {project.technologies.map((t) => (

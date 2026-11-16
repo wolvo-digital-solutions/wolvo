@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { gsap } from '@/animations/gsap';
 import { useSectionMotion } from '@/hooks/useSectionMotion';
 import { useUI } from '@/context/UIContext';
-import { services } from '@/data/services';
+import { useContent } from '@/context/ContentContext';
 import { Button } from '@/components/ui/Button';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ServiceCard } from './ServiceCard';
@@ -12,6 +12,7 @@ import './Services.css';
 export function Services() {
   const ref = useRef<HTMLElement>(null);
   const { openContact } = useUI();
+  const { services } = useContent();
 
   useSectionMotion(
     ref,

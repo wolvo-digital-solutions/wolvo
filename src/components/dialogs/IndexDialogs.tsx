@@ -2,8 +2,7 @@ import { useRef, useState } from 'react';
 import { gsap, useGSAP } from '@/animations/gsap';
 import { prefersReducedMotion } from '@/animations/smoothScroll';
 import { useUI, useUIState } from '@/context/UIContext';
-import { projects, projectCategories } from '@/data/projects';
-import { articles, articleCategories } from '@/data/articles';
+import { useContent } from '@/context/ContentContext';
 import { Modal } from '@/components/ui/Modal';
 import { ProjectCard } from '@/components/sections/ProjectCard';
 import { ArticleCard } from '@/components/sections/ArticleCard';
@@ -67,6 +66,7 @@ function countBy<T>(items: T[], key: (item: T) => string) {
 export function ProjectsIndexDialog() {
   const { projectsIndex } = useUIState();
   const { closeProjectsIndex, openProject } = useUI();
+  const { projects, projectCategories } = useContent();
   const [filter, setFilter] = useState(ALL);
   const gridRef = useGridAnimation(filter);
   const visible = filter === ALL ? projects : projects.filter((p) => p.category === filter);
@@ -112,6 +112,7 @@ export function ProjectsIndexDialog() {
 export function ArticlesIndexDialog() {
   const { articlesIndex } = useUIState();
   const { closeArticlesIndex, openArticle } = useUI();
+  const { articles, articleCategories } = useContent();
   const [filter, setFilter] = useState(ALL);
   const gridRef = useGridAnimation(filter);
   const visible = filter === ALL ? articles : articles.filter((a) => a.category === filter);
@@ -139,9 +140,15 @@ export function ArticlesIndexDialog() {
           </p>
         </header>
         <div ref={gridRef} className="index-dialog__grid index-dialog__grid--articles">
-          {visible.map((article) => (
-            <ArticleCard key={article.id} article={article} variant="grid" onOpen={openArticle} />
-          ))}
+          {visible.length === 0 ? (
+            <p style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '48px 0', color: 'var(--color-text-muted)' }}>
+              No articles found.
+            </p>
+          ) : (
+            visible.map((article) => (
+              <ArticleCard key={article.id} article={article} variant="grid" onOpen={openArticle} />
+            ))
+          )}
         </div>
       </div>
     </Modal>

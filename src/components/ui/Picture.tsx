@@ -32,11 +32,12 @@ type Stage = 'primary' | 'fallback' | 'failed';
  */
 export function Picture({ set, alt, sizes, className, imgClassName, priority = false, fallbackSrc, fallback, skipWhen }: PictureProps) {
   const [stage, setStage] = useState<Stage>('primary');
-  const srcset = (ext: string) => set.widths.map((w) => `${assetUrl(set.base)}-${w}.${ext} ${w}w`).join(', ');
+  const isDirectUrl = !set?.widths || set.widths.length === 0 || /^https?:\/\//i.test(set.fallback) || /^data:/i.test(set.fallback);
+  const srcset = (ext: string) => (set?.widths ? set.widths.map((w) => `${assetUrl(set.base)}-${w}.${ext} ${w}w`).join(', ') : '');
   const common = {
     className: imgClassName,
-    width: set.width,
-    height: set.height,
+    width: set?.width || 1200,
+    height: set?.height || 750,
     alt,
     loading: priority ? ('eager' as const) : ('lazy' as const),
     decoding: priority ? ('sync' as const) : ('async' as const),
@@ -48,6 +49,19 @@ export function Picture({ set, alt, sizes, className, imgClassName, priority = f
     return (
       <picture className={className}>
         <img {...common} src={assetUrl(fallbackSrc)} onError={() => setStage('failed')} />
+      </picture>
+    );
+  }
+
+  if (isDirectUrl) {
+    return (
+      <picture className={className}>
+        <img
+          {...common}
+          src={assetUrl(set.fallback)}
+          fetchPriority={priority ? 'high' : 'auto'}
+          onError={() => setStage(fallbackSrc ? 'fallback' : 'failed')}
+        />
       </picture>
     );
   }

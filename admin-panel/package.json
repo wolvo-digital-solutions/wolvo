@@ -1,0 +1,27 @@
+{
+  "name": "wolvo-admin-panel",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Wolvo — Independent Admin & CMS Dashboard Application",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5175",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --port 5175",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.109.0",
+    "lucide-react": "^1.53.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.4"
+  }
+}

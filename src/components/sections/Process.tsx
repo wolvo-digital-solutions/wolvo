@@ -17,9 +17,38 @@ export function Process() {
       const q = gsap.utils.selector(scope);
       const track = q('.process__track')[0];
       const steps = q('[data-step]');
+      const line = q('.process__line')[0] as HTMLElement | undefined;
       const axis = isDesktop ? 'scaleX' : 'scaleY';
 
       track.classList.add('is-animated');
+
+      const updateLine = () => {
+        if (!line) return;
+        if (isDesktop) {
+          line.style.top = '';
+          line.style.height = '';
+          line.style.bottom = '';
+          line.style.left = '';
+          return;
+        }
+        const firstNode = steps[0]?.querySelector('.process__node');
+        const lastNode = steps[steps.length - 1]?.querySelector('.process__node');
+        if (firstNode && lastNode) {
+          const firstRect = firstNode.getBoundingClientRect();
+          const lastRect = lastNode.getBoundingClientRect();
+          const trackRect = track.getBoundingClientRect();
+          const top = firstRect.top - trackRect.top + firstRect.height / 2;
+          const h = lastRect.top + lastRect.height / 2 - (firstRect.top + firstRect.height / 2);
+          const left = firstRect.left - trackRect.left + firstRect.width / 2;
+          line.style.top = `${top}px`;
+          line.style.height = `${h}px`;
+          line.style.left = `${left}px`;
+          line.style.bottom = 'auto';
+        }
+      };
+
+      updateLine();
+      window.addEventListener('resize', updateLine);
 
       gsap.fromTo(
         q('.process__line-fill'),
@@ -42,7 +71,16 @@ export function Process() {
         },
       );
 
-      return () => track.classList.remove('is-animated');
+      return () => {
+        track.classList.remove('is-animated');
+        window.removeEventListener('resize', updateLine);
+        if (line) {
+          line.style.top = '';
+          line.style.height = '';
+          line.style.bottom = '';
+          line.style.left = '';
+        }
+      };
     },
     {
       reveals: false,
@@ -91,9 +129,11 @@ export function Process() {
               <span className="process__node" aria-hidden="true">
                 <Icon className="process__icon" strokeWidth={1.6} color="url(#process-icon-gradient)" />
               </span>
-              <span className="process__num">Step {padNumber(i + 1, 2)}</span>
-              <h4 className="process__step-title">{title}</h4>
-              <p className="process__step-desc">{description}</p>
+              <div className="process__content">
+                <span className="process__num">Step {padNumber(i + 1, 2)}</span>
+                <h4 className="process__step-title">{title}</h4>
+                <p className="process__step-desc">{description}</p>
+              </div>
             </li>
           ))}
         </ol>

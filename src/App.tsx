@@ -4,6 +4,7 @@ import { initSmoothScroll, scrollToSection } from '@/animations/smoothScroll';
 import { whenMotionSettled } from '@/animations/scheduler';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { UIProvider } from '@/context/UIContext';
+import { ContentProvider } from '@/context/ContentContext';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Hero } from '@/components/sections/Hero';
@@ -13,12 +14,11 @@ import { TechStack } from '@/components/sections/TechStack';
 import { Projects } from '@/components/sections/Projects';
 import { Articles } from '@/components/sections/Articles';
 import { Testimonials } from '@/components/sections/Testimonials';
-import { FinalCTA } from '@/components/sections/FinalCTA';
+import { FinalCTA } from '@/components/sections/FinalCta';
 import { DialogRoot } from '@/components/dialogs/DialogRoot';
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton';
 
-/** Page flow: Navbar → Hero → About → Services → Tech Stack → Projects → Articles → Reviews → Final CTA → Footer. */
-export default function App() {
+function PublicWebsite() {
   useEffect(() => initSmoothScroll(), []);
 
   // In-page anchors: smooth scroll with nav offset and focus management.
@@ -35,8 +35,7 @@ export default function App() {
     return () => document.removeEventListener('click', onClick);
   }, []);
 
-  // Recalculate scroll positions once web fonts and deferred section motion settle
-  // (the pinned project rail changes page height), then honour a deep-linked hash.
+  // Recalculate scroll positions once web fonts and deferred section motion settle.
   useEffect(() => {
     let cancelled = false;
     Promise.all([document.fonts?.ready, whenMotionSettled()]).then(() => {
@@ -74,5 +73,13 @@ export default function App() {
         <DialogRoot />
       </UIProvider>
     </ThemeProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <ContentProvider>
+      <PublicWebsite />
+    </ContentProvider>
   );
 }

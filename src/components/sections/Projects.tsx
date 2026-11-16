@@ -4,7 +4,7 @@ import { jumpTo } from '@/animations/smoothScroll';
 import { useSectionMotion } from '@/hooks/useSectionMotion';
 import { useCarousel } from '@/hooks/useCarousel';
 import { useUI } from '@/context/UIContext';
-import { featuredProjects, projects } from '@/data/projects';
+import { useContent } from '@/context/ContentContext';
 import { padNumber } from '@/lib/format';
 import { Button } from '@/components/ui/Button';
 import { CarouselControls } from '@/components/ui/CarouselControls';
@@ -25,6 +25,7 @@ export function Projects() {
   const barRef = useRef<HTMLSpanElement>(null);
   const rail = useRef<RailState | null>(null);
   const { openProject, openProjectsIndex, openContact } = useUI();
+  const { featuredProjects, projects } = useContent();
   const carousel = useCarousel(trackRef);
   const total = featuredProjects.length;
 

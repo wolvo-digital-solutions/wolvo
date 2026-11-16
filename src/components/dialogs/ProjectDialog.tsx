@@ -1,8 +1,7 @@
 import { CheckCircle2, Target } from 'lucide-react';
 import { useUI, useUIState } from '@/context/UIContext';
+import { useContent } from '@/context/ContentContext';
 import { useStickyValue } from '@/hooks/useStickyValue';
-import { projects } from '@/data/projects';
-import { serviceTitles } from '@/data/services';
 import { isSafeUrl } from '@/lib/url';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
@@ -12,6 +11,8 @@ import './dialogs.css';
 export default function ProjectDialog() {
   const { projectId } = useUIState();
   const { closeProject, openContact } = useUI();
+  const { projects, services } = useContent();
+  const serviceTitles = services.map((s) => s.title);
   const id = useStickyValue(projectId);
   const project = projects.find((p) => p.id === id);
 

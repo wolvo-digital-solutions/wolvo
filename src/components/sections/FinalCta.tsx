@@ -3,9 +3,9 @@ import { Mail } from 'lucide-react';
 import { gsap, ScrollTrigger } from '@/animations/gsap';
 import { useSectionMotion } from '@/hooks/useSectionMotion';
 import { useUI } from '@/context/UIContext';
+import { useContent } from '@/context/ContentContext';
 import { images } from '@/data/images';
 import { site } from '@/data/site';
-import { services } from '@/data/services';
 import { Button } from '@/components/ui/Button';
 import { Picture } from '@/components/ui/Picture';
 import { StatusPill } from '@/components/ui/StatusPill';
@@ -14,6 +14,7 @@ import './FinalCTA.css';
 export function FinalCTA() {
   const ref = useRef<HTMLElement>(null);
   const { openContact } = useUI();
+  const { services } = useContent();
 
   useSectionMotion(
     ref,

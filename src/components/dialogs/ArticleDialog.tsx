@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useUI, useUIState } from '@/context/UIContext';
+import { useContent } from '@/context/ContentContext';
 import { useStickyValue } from '@/hooks/useStickyValue';
-import { articles } from '@/data/articles';
 import { formatDate, readingTime } from '@/lib/format';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
@@ -13,6 +13,7 @@ import './dialogs.css';
 export default function ArticleDialog() {
   const { articleId } = useUIState();
   const { closeArticle, openArticle, openContact } = useUI();
+  const { articles } = useContent();
   const id = useStickyValue(articleId);
   const index = articles.findIndex((a) => a.id === id);
   const article = articles[index];

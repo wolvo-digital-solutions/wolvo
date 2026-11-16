@@ -3,7 +3,7 @@ import { Quote, Star } from 'lucide-react';
 import type { Testimonial } from '@/types/content';
 import { useSectionMotion } from '@/hooks/useSectionMotion';
 import { useCarousel } from '@/hooks/useCarousel';
-import { testimonials } from '@/data/testimonials';
+import { useContent } from '@/context/ContentContext';
 import { initials } from '@/lib/format';
 import { CarouselControls } from '@/components/ui/CarouselControls';
 import { SectionHeading } from '@/components/ui/SectionHeading';
@@ -48,6 +48,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 export function Testimonials() {
   const ref = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const { testimonials } = useContent();
   const carousel = useCarousel(trackRef);
   useSectionMotion(ref);
 
